@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BulletData
   m_EditorClassIdentifier: 
   baseDamage: 10
-  damageMultiplier: 1
+  damageMultiplier: 0
   bulletsPerShot: 3
   bulletAngles:
   - -15
