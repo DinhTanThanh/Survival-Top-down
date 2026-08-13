@@ -10,16 +10,18 @@ public class PlayerShooting : LoadMonoBehaviour
     [SerializeField] protected GameObject bulletPrefab;
     [SerializeField] protected Transform firePoint;
     [SerializeField] protected PlayerController playerController;
-    [SerializeField] protected int[] arrayDirectionBullet;
+    [SerializeField] protected BulletController bulletController;
+    [SerializeField] protected float[] bulletAngles;
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadPlayerController();
         this.GetBulletPrefab();
+        this.LoadBulletController();
         this.GetFirePoint();
-        this.GetBulletPerShot(3);
-        this.SetTimeDelay(0.5f);
-        this.SetArrayDirectionBullet(new int[] { -15, 0, 15 });
+        this.GetBulletPerShot(this.bulletController.WeaponData.bulletsPerShot);
+        this.SetTimeDelay(this.bulletController.WeaponData.fireCooldown);
+        this.SetArrayDirectionBullet(this.bulletController.WeaponData.bulletAngles);
         this.SetCanFire(true);
     }
     private void Update()
@@ -38,7 +40,7 @@ public class PlayerShooting : LoadMonoBehaviour
     {
         for(int i = 0; i < this.bulletPerShot; i++)
         {
-            Quaternion newRotation = Quaternion.Euler(0f, this.arrayDirectionBullet[i],0f);
+            Quaternion newRotation = Quaternion.Euler(0f, this.bulletAngles[i],0f);
             SpawnBullet.Instance.ExecuteSpawnPooling(this.bulletPrefab, this.firePoint.position, newRotation);
         }
     }
@@ -47,6 +49,13 @@ public class PlayerShooting : LoadMonoBehaviour
         if (this.playerController != null) return;
         this.playerController = GetComponentInParent<PlayerController>();
         Debug.LogWarning(transform.name + " : LoadPlayerController");
+    }
+    protected virtual void LoadBulletController()
+    {
+        if (this.bulletPrefab == null) return;
+        if (this.bulletController != null) return;
+        this.bulletController=this.bulletPrefab.GetComponent<BulletController>();
+        Debug.LogWarning(transform.name + " : LoadBulletController");
     }
     protected virtual void GetBulletPrefab()
     {
@@ -70,9 +79,9 @@ public class PlayerShooting : LoadMonoBehaviour
     {
         this.canFire = canFire;
     }
-    protected virtual void SetArrayDirectionBullet(int[] arrayDirectionBullet)
+    protected virtual void SetArrayDirectionBullet(float[] arrayDirectionBullet)
     {
-        this.arrayDirectionBullet = arrayDirectionBullet;
+        this.bulletAngles = arrayDirectionBullet;
     }
     protected virtual bool Timing()
     {

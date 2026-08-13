@@ -13,8 +13,8 @@ public class PlayerMoving : LoadMonoBehaviour
         base.LoadComponent();
         this.LoadRigidbody();
         this.LoadPlayerController();
-        this.GetSpeedMovement();
-        this.GetSpeedRotation();
+        this.SetSpeedMovement(this.playerController.EntitySO.baseSpeed);
+        this.SetSpeedRotation(this.playerController.EntitySO.baseRotation);
     }
     protected virtual void LoadPlayerController()
     {
@@ -54,14 +54,12 @@ public class PlayerMoving : LoadMonoBehaviour
         }
         this.transform.parent.Translate(movementPosition * this.speedMovement * Time.fixedDeltaTime, Space.World);
     }
-    protected virtual void GetSpeedMovement()
+    protected virtual void SetSpeedMovement(float speedMovement)
     {
-        if (this.playerController == null) return;
-        this.speedMovement = this.playerController.EntitySO.baseSpeed;
+        this.speedMovement = speedMovement;
     }
-    protected virtual void GetSpeedRotation()
+    protected virtual void SetSpeedRotation(float speedRotation)
     {
-        if (this.playerController == null) return;
-        this.speedRotation = this.playerController.EntitySO.baseRotation;
+        this.speedRotation = speedRotation;
     }
 }
