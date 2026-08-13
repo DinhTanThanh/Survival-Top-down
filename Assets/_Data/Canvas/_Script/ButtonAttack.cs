@@ -26,14 +26,11 @@ public class ButtonAttack : BaseButton
     {
         this.rangeIndicator.SetActive(true);
         this.SetIsAttack(true);
-        Debug.Log("EnableRangeIndicator: " + isAttack);
     }
     public virtual void DisableRangeIndicator()
     {
         this.SetIsAttack(false);
         this.rangeIndicator.SetActive(false);
-        Debug.Log("thuc hien");
-        Debug.Log(isAttack);
     }
     public virtual void SetIsAttack(bool isAttack)
     {
