@@ -7,6 +7,10 @@ public class DamageReceiver : LoadMonoBehaviour
     [SerializeField] protected int defence;
     protected virtual float CalculateDefence(float damage)
     {
-        return damage - this.defence;
+        return Mathf.Max(damage - this.defence,0);
+    }
+    protected virtual void ReduceHp(float damage)
+    {
+        float finalHp = Mathf.Max(this.hp - damage,0);
     }
 }
