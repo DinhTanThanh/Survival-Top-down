@@ -38,9 +38,8 @@ public class PlayerShooting : LoadMonoBehaviour
     {
         for(int i = 0; i < this.bulletPerShot; i++)
         {
-            Quaternion newFirePoint = this.firePoint.rotation;
-            newFirePoint.y = this.arrayDirectionBullet[i];
-            SpawnBullet.Instance.ExecuteSpawnPooling(this.bulletPrefab, this.firePoint.position, newFirePoint);
+            Quaternion newRotation = Quaternion.Euler(0f, this.arrayDirectionBullet[i],0f);
+            SpawnBullet.Instance.ExecuteSpawnPooling(this.bulletPrefab, this.firePoint.position, newRotation);
         }
     }
     protected virtual void LoadPlayerController()
@@ -74,7 +73,6 @@ public class PlayerShooting : LoadMonoBehaviour
     protected virtual void SetArrayDirectionBullet(int[] arrayDirectionBullet)
     {
         this.arrayDirectionBullet = arrayDirectionBullet;
-        ;
     }
     protected virtual bool Timing()
     {
