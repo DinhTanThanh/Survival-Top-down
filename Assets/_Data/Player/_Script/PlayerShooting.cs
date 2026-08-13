@@ -38,10 +38,12 @@ public class PlayerShooting : LoadMonoBehaviour
     }
     protected virtual void Shooting()
     {
+        Quaternion rotCurrent = this.playerController.transform.rotation;
         for(int i = 0; i < this.bulletPerShot; i++)
         {
             Quaternion newRotation = Quaternion.Euler(0f, this.bulletAngles[i],0f);
-            SpawnBullet.Instance.ExecuteSpawnPooling(this.bulletPrefab, this.firePoint.position, newRotation);
+            Quaternion rot = newRotation * rotCurrent;
+            SpawnBullet.Instance.ExecuteSpawnPooling(this.bulletPrefab, this.firePoint.position, rot);
         }
     }
     protected virtual void LoadPlayerController()

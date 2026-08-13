@@ -11,7 +11,7 @@ public class BulletMoving : LoadMonoBehaviour
     protected override void LoadComponent()
     {
         base.LoadComponent();
-        this.SetSpeedMovement(2f);
+        this.SetSpeedMovement(20f);
         this.LoadRigidbody();
     }
     protected virtual void LoadRigidbody()
