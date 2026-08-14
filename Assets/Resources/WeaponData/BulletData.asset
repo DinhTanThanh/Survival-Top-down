@@ -22,3 +22,5 @@ MonoBehaviour:
   fireCooldown: 0.5
   maxCharge: 3
   chargeRegenTime: 3
+  moveSpeed: 20
+  maxDistance: 5

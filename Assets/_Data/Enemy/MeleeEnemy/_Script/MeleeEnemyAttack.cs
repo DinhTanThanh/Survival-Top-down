@@ -61,8 +61,8 @@ public class MeleeEnemyAttack : LoadMonoBehaviour
         float angle = Vector3.Angle(this.enemyRoot.forward, directionToTarget);
         if (angle > 25f) return;
         if (this.isAttack) return;
-        this.SetIsAttack(true);
         this.meleeEnemycontroller.Animator.SetTrigger("Attack");
         this.meleeEnemycontroller.MeleeEnemyMoving.SetSpeedMovement(0f);
+        this.SetIsAttack(true);
     }
 }

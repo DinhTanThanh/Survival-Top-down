@@ -1,28 +1,19 @@
 using UnityEngine;
 
-public class BulletMoving : LoadMonoBehaviour
+public class BulletMoving : Movement
 {
-    [SerializeField] protected float speedMovement;
-    [SerializeField] protected Rigidbody rb;
-    private void OnEnable()
-    {
-        this.rb.linearVelocity = this.speedMovement * transform.forward;
-    }
+    [SerializeField] protected BulletController bulletController;
     protected override void LoadComponent()
     {
         base.LoadComponent();
-        this.SetSpeedMovement(20f);
+        this.LoadBulletController();
+        this.SetSpeedMovement(this.bulletController.WeaponData.moveSpeed);
         this.LoadRigidbody();
     }
-    protected virtual void LoadRigidbody()
+    protected virtual void LoadBulletController()
     {
-        if (this.rb != null) return;
-        this.rb = GetComponentInParent<Rigidbody>();
-        Debug.LogWarning(transform.name + " : LoadRigidbody");
+        if (this.bulletController != null) return;
+        this.bulletController = GetComponentInParent<BulletController>();
+        Debug.LogWarning(transform.name + " : LoadBulletController");
     }
-    protected virtual void SetSpeedMovement(float speedMovement)
-    {
-        this.speedMovement = speedMovement;
-    }
-
 }

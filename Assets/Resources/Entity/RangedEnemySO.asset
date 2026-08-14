@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddd7df0009fe0a743bf00a25d115c7f9, type: 3}
+  m_Name: RangedEnemySO
+  m_EditorClassIdentifier: 
+  baseHp: 180
+  baseSpeed: 2.7
+  baseRotation: 0
+  baseDefence: 0
+  baseDamage: 0
+  damageMultiplier: 0
+  attackRange: 3
