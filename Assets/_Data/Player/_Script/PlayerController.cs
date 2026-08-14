@@ -1,19 +1,16 @@
 using UnityEngine;
 
-public class PlayerController : LoadMonoBehaviour
+public class PlayerController : BaseEntityController
 {
     [SerializeField] protected GameObject bullet;
     [SerializeField] protected Transform firePoint;
-    [SerializeField] protected EntitySO entitySO;
     [SerializeField] protected ButtonAttack buttonAttack;
     public GameObject Bullet => bullet;
     public Transform FirePoint => firePoint;
-    public EntitySO EntitySO => entitySO;
     public ButtonAttack ButtonAttack => buttonAttack;
     protected override void LoadComponent()
     {
         base.LoadComponent();
-        this.LoadEntitySO();
         this.LoadFirePoint();
         this.LoadBullet();
         this.LoadButtonAttack();
@@ -36,10 +33,5 @@ public class PlayerController : LoadMonoBehaviour
         this.firePoint = transform.Find("FirePoint");
         Debug.LogWarning(transform.name + " : LoadFirePoint");
     }
-    protected virtual void LoadEntitySO()
-    {
-        if (this.entitySO != null) return;
-        this.entitySO = Resources.Load<EntitySO>("Entity/" + transform.name + "SO");
-        Debug.LogWarning(transform.name + " : LoadEntitySO");
-    }
+    
 }
