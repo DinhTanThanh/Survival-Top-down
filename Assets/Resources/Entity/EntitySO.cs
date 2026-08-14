@@ -8,5 +8,6 @@ public class EntitySO : ScriptableObject
     public int baseRotation;
     public int baseDefence;
     public int baseDamage;
+    public float damageMultiplier;
     public float attackRange;
 }

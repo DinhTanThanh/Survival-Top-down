@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BulletDamageSender : DamageSender
 {
@@ -15,14 +16,6 @@ public class BulletDamageSender : DamageSender
         if (this.bulletController != null) return;
         this.bulletController = GetComponentInParent<BulletController>();
         Debug.LogWarning(transform.name + " : LoadBulletController");
-    }
-    protected virtual void SetBaseDamage(float baseDamage)
-    {
-        this.baseDamage = baseDamage;
-    }
-    protected virtual void SetDamageMultiplier(float damageMultiplier)
-    {
-        this.damageMultiplier = damageMultiplier;
     }
     private void OnTriggerEnter(Collider other)
     {
