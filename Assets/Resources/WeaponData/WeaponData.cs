@@ -9,4 +9,6 @@ public class WeaponData : ScriptableObject
     public float fireCooldown;
     public int maxCharge;
     public float chargeRegenTime;
+    public float moveSpeed;
+    public float maxDistance;
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 public class EntitySO : ScriptableObject
 {
     public float baseHp;
-    public int baseSpeed;
+    public float baseSpeed;
     public int baseRotation;
     public int baseDefence;
     public int baseDamage;

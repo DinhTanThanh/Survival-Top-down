@@ -3,10 +3,18 @@ using UnityEngine;
 
 public class BulletDisableByDistance : BaseDisableByDistance
 {
+    [SerializeField] protected BulletController bulletController;
     protected override void LoadComponent()
     {
         base.LoadComponent();
-        this.SetDistanceLimit(5f);
+        this.LoadBulletController();
+        this.SetDistanceLimit(this.bulletController.WeaponData.maxDistance);
+    }
+    protected virtual void LoadBulletController()
+    {
+        if (this.bulletController != null) return;
+        this.bulletController = GetComponentInParent<BulletController>();
+        Debug.LogWarning(transform.name + " : LoadBulletController");
     }
     private void OnEnable()
     {

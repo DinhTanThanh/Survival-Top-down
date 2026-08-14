@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
-
 public class BulletDamageSender : DamageSender
 {
     [SerializeField] protected BulletController bulletController;
