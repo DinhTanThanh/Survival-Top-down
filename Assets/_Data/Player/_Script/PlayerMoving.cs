@@ -8,6 +8,8 @@ public class PlayerMoving : LoadMonoBehaviour
     [SerializeField] protected float speedMovement;
     [SerializeField] protected float speedRotation;
     [SerializeField] protected PlayerController playerController;
+    private Vector3 camForward;
+    private Vector3 camRight;
     protected override void LoadComponent()
     {
         base.LoadComponent();
@@ -19,7 +21,7 @@ public class PlayerMoving : LoadMonoBehaviour
     protected virtual void LoadPlayerController()
     {
         if (this.playerController != null) return;
-        this.playerController= GetComponentInParent<PlayerController>();
+        this.playerController = GetComponentInParent<PlayerController>();
         Debug.LogWarning(transform.name + " : LoadPlayerController");
     }
     protected virtual void LoadRigidbody()
@@ -32,6 +34,14 @@ public class PlayerMoving : LoadMonoBehaviour
     {
         this.horizontal = InputSystem.Instance.GetHorizontal();
         this.vertical = InputSystem.Instance.GetVertical();
+        Transform camTransform = Camera.main.transform;
+        this.camForward = camTransform.forward;
+        this.camRight = camTransform.right;
+
+        camForward.y = 0f;
+        camRight.y = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
     }
     private void FixedUpdate()
     {
@@ -39,20 +49,19 @@ public class PlayerMoving : LoadMonoBehaviour
     }
     protected virtual void Moving()
     {
-        Transform camTransform = Camera.main.transform;
-        Vector3 camForward = camTransform.forward;
-        Vector3 camRight = camTransform.right;  
-
-        camForward.y = 0f;
-        camRight.y = 0f;
-
         Vector3 movementPosition = (camForward * this.vertical) + (camRight * this.horizontal);
+        if (movementPosition.magnitude > 1f)
+        {
+            movementPosition.Normalize();
+        }
         if (movementPosition != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(movementPosition);
-            this.transform.parent.rotation = Quaternion.RotateTowards(this.transform.parent.rotation, targetRotation, this.speedRotation * Time.fixedDeltaTime);
+            Quaternion newRotation = Quaternion.RotateTowards(this.rb.rotation, targetRotation, this.speedRotation * Time.fixedDeltaTime);
+            this.rb.MoveRotation(newRotation);
         }
-        this.transform.parent.Translate(movementPosition * this.speedMovement * Time.fixedDeltaTime, Space.World);
+        Vector3 moveDelta = movementPosition * this.speedMovement * Time.fixedDeltaTime;
+        this.rb.MovePosition(this.rb.position + moveDelta);
     }
     protected virtual void SetSpeedMovement(float speedMovement)
     {
