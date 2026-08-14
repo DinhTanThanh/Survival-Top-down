@@ -14,11 +14,14 @@ public class BulletDamageSender : DamageSender
     protected virtual void LoadBulletController()
     {
         if (this.bulletController != null) return;
-        this.bulletController = GetComponentInParent<BulletController>();
+        this.bulletController = GetComponent<BulletController>();
         Debug.LogWarning(transform.name + " : LoadBulletController");
     }
     private void OnTriggerEnter(Collider other)
     {
-        
+        DamageReceiver damageReceiver=other.transform.parent?.GetComponentInChildren<DamageReceiver>();
+        if (damageReceiver == null || damageReceiver is PlayerDamageReceiver) return;
+        float damage = this.CalculateDamage();
+        damageReceiver.ReduceHp(damage);
     }
 }
