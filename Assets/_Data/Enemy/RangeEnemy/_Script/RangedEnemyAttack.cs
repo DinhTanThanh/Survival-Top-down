@@ -22,7 +22,7 @@ public class RangedEnemyAttack : LoadMonoBehaviour
     }
     private void Update()
     {
-        if (Vector3.Distance(this.rangedEnemyController.Target.position, this.transform.parent.position) > 5f) return;
+        if (Vector3.Distance(this.rangedEnemyController.Target.position, this.transform.parent.position) > 4f) return;
         if (this.isAttack) return;
         this.rangedEnemyController.Animator.SetTrigger("Attack");
         this.rangedEnemyController.RangedEnemyMoving.SetSpeedMovement(0f);

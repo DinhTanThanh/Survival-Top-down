@@ -1,36 +1,50 @@
+using JetBrains.Annotations;
 using Unity.Mathematics;
 using UnityEngine;
 
 public class PlayerShooting : LoadMonoBehaviour
 {
     [SerializeField] protected int bulletPerShot;
+    [SerializeField] protected int currentCharge;
+    [SerializeField] protected int maxCharge;
+    [SerializeField] protected float chargeRegenTime;
     [SerializeField] protected float timer;
     [SerializeField] protected float timeDelay;
+    [SerializeField] protected float[] bulletAngles;
     [SerializeField] protected bool canFire;
     [SerializeField] protected GameObject bulletPrefab;
     [SerializeField] protected Transform firePoint;
     [SerializeField] protected PlayerController playerController;
-    [SerializeField] protected BulletController bulletController;
-    [SerializeField] protected float[] bulletAngles;
+    public float ChargeRegenTime => chargeRegenTime;
+    public int MaxCharge => maxCharge;
+    public int CurrentCharge
+    {
+        get { return this.currentCharge; }
+        set {this.currentCharge = value;}
+    }
+    public PlayerController PlayerController => playerController;
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadPlayerController();
         this.GetBulletPrefab();
-        this.LoadBulletController();
         this.GetFirePoint();
-        this.GetBulletPerShot(this.bulletController.WeaponData.bulletsPerShot);
-        this.SetTimeDelay(this.bulletController.WeaponData.fireCooldown);
-        this.SetArrayDirectionBullet(this.bulletController.WeaponData.bulletAngles);
+        this.SetChargeRegenTime(this.playerController.ShotData.chargeRegenTime);
+        this.SetMaxCharge(this.playerController.ShotData.maxCharge);
+        this.SetCurrentCharge(this.playerController.ShotData.maxCharge);
+        this.GetBulletPerShot(this.playerController.ShotData.bulletsPerShot);
+        this.SetTimeDelay(this.playerController.ShotData.fireCooldown);
+        this.SetArrayDirectionBullet(this.playerController.ShotData.bulletAngles);
         this.SetCanFire(true);
     }
     private void Update()
     {
         if (this.canFire)
         {
+            if (this.currentCharge <= 0) return;
             if (!this.playerController.ButtonAttack.IsAttack) return;
-            Debug.Log("player: " + this.playerController.ButtonAttack.IsAttack);
             this.Shooting();
+            this.currentCharge--;
             this.canFire = false;
         }
         if (!this.Timing()) return;
@@ -52,13 +66,6 @@ public class PlayerShooting : LoadMonoBehaviour
         this.playerController = GetComponentInParent<PlayerController>();
         Debug.LogWarning(transform.name + " : LoadPlayerController");
     }
-    protected virtual void LoadBulletController()
-    {
-        if (this.bulletPrefab == null) return;
-        if (this.bulletController != null) return;
-        this.bulletController=this.bulletPrefab.GetComponent<BulletController>();
-        Debug.LogWarning(transform.name + " : LoadBulletController");
-    }
     protected virtual void GetBulletPrefab()
     {
         if (this.playerController == null) return;
@@ -73,6 +80,14 @@ public class PlayerShooting : LoadMonoBehaviour
     {
         this.bulletPerShot = bulletPerShot;
     }
+    protected virtual void SetChargeRegenTime(float chargeRegenTime)
+    {
+        this.chargeRegenTime = chargeRegenTime;
+    }
+    protected virtual void SetMaxCharge(int maxCharge)
+    {
+        this.maxCharge = maxCharge;
+    }
     protected virtual void SetTimeDelay(float timeDelay)
     {
         this.timeDelay= timeDelay;
@@ -83,7 +98,12 @@ public class PlayerShooting : LoadMonoBehaviour
     }
     protected virtual void SetArrayDirectionBullet(float[] arrayDirectionBullet)
     {
+        if (arrayDirectionBullet.Length <= 0) return;
         this.bulletAngles = arrayDirectionBullet;
+    }
+    protected virtual void SetCurrentCharge(int numberCharge)
+    {
+        this.currentCharge = numberCharge;
     }
     protected virtual bool Timing()
     {
