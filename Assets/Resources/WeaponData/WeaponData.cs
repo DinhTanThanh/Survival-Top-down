@@ -4,11 +4,6 @@ public class WeaponData : ScriptableObject
 {
     public float baseDamage;
     public float damageMultiplier;
-    public int bulletsPerShot;
-    public float[] bulletAngles;
-    public float fireCooldown;
-    public int maxCharge;
-    public float chargeRegenTime;
     public float moveSpeed;
     public float maxDistance;
 }
