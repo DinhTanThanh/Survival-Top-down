@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseDamage: 30
   damageMultiplier: 0
-  bulletsPerShot: 0
+  bulletsPerShot: 1
   bulletAngles: []
   fireCooldown: 0
   maxCharge: 0
