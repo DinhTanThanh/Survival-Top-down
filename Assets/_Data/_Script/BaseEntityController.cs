@@ -5,16 +5,25 @@ public class BaseEntityController : LoadMonoBehaviour
     [SerializeField] protected Transform target;
     [SerializeField] protected EntitySO entitySO;
     [SerializeField] protected Animator animator;
+    [SerializeField] protected DamageReceiver damageReceiver;
     public Transform Target => target;
 
     public EntitySO EntitySO => entitySO;
     public Animator Animator => animator;
+    public DamageReceiver DamageReceiver => damageReceiver;
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadTarget();
         this.LoadEntitySO();
         this.LoadAnimator();
+        this.LoadDamageReceiver();
+    }
+    protected virtual void LoadDamageReceiver()
+    {
+        if (this.damageReceiver != null) return;
+        this.damageReceiver = GetComponentInChildren<DamageReceiver>();
+        Debug.LogWarning(transform.name + " : LoaddamageReceiver");
     }
     protected virtual void LoadTarget()
     {

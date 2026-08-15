@@ -22,5 +22,9 @@ public class ProjectileDamageSender : DamageSender
         if (damageReceiver == null || damageReceiver is RangedEnemyDamageReceiver) return;
         float damage = this.CalculateDamage();
         damageReceiver.ReduceHp(damage);
+        PlayerPoisonHandler playerPoisonHandler = other.transform.parent?.GetComponentInChildren<PlayerPoisonHandler>();
+        if (playerPoisonHandler == null) return;
+        playerPoisonHandler.SetBaseDamagePoison(this.projectileController.WeaponData.baseDamage);
+        playerPoisonHandler.Refresh();
     }
 }
