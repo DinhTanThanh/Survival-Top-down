@@ -9,14 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d1c56e81fda35943bf8e1d7a2129011, type: 3}
-  m_Name: TripleShot
+  m_Script: {fileID: 11500000, guid: 60ae7132bc6a63642811a55ba62b95e6, type: 3}
+  m_Name: BombData
   m_EditorClassIdentifier: 
-  bulletsPerShot: 3
-  bulletAngles:
-  - -15
-  - 0
-  - 15
-  fireCooldown: 0.5
-  maxCharge: 3
-  chargeRegenTime: 3
+  TimeDelay: 2
+  BaseDamage: 50
+  ExplosionRadius: 5
+  CoolDown: 12
+  prefab: {fileID: 6247553598375965798, guid: cd8cd064d185fc14ebedcc0a02583b33, type: 3}
