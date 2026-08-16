@@ -1,24 +1,27 @@
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class BulletDisableByDistance : BaseDisableByDistance
 {
     [SerializeField] protected BulletController bulletController;
+    private void OnEnable()
+    {
+        this.SetFirePointStart(this.bulletController.FirePointStart.position);
+    }
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadBulletController();
         this.SetDistanceLimit(this.bulletController.WeaponData.maxDistance);
     }
+    protected virtual void SetFirePointStart(Vector3 posStart)
+    {
+        this.posStart = posStart;
+    }
     protected virtual void LoadBulletController()
     {
         if (this.bulletController != null) return;
         this.bulletController = GetComponentInParent<BulletController>();
         Debug.LogWarning(transform.name + " : LoadBulletController");
-    }
-    private void OnEnable()
-    {
-        this.posStart = this.transform.parent.position;
     }
     private void Update()
     {

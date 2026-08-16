@@ -41,7 +41,7 @@ public class PlayerShooting : LoadMonoBehaviour
         {
             if (this.currentCharge <= 0) return;
             if (!this.playerController.ButtonAttack.IsAttack) return;
-            this.Shooting();
+            this.playerController.Animator.SetTrigger("Shoot");
             this.currentCharge--;
             this.canFire = false;
         }

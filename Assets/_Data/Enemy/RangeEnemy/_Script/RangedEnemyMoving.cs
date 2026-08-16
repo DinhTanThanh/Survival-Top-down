@@ -12,15 +12,6 @@ public class RangedEnemyMoving : BaseMoving
     {
         this.attackRange = attackRange;
     }
-    //giờ giả lập là danh sách quái đầu tiên đã chết hết rồi và cài biên isRunning là true
-    private void OnEnable()
-    {
-        this.isRuning = true;
-    }
-    private void Update()
-    {
-        
-    }
     private void FixedUpdate()
     {
         if (Vector3.Distance(this.target.position, this.enemyRoot.position) > this.attackRange)

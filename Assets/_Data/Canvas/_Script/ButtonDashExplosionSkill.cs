@@ -14,6 +14,7 @@ public class ButtonDashExplosionSkill : BaseButton
     [SerializeField] protected bool canUseSkill;
     [SerializeField] protected Transform player;
     [SerializeField] protected GameObject rangeIndicator;
+    [SerializeField] protected Rigidbody rb;
     [SerializeField] protected TextMeshProUGUI textMeshProUGUI;
     [SerializeField] protected DashExplosionData dashExplosionData;
     [SerializeField] protected PlayerController playerController;
@@ -27,6 +28,7 @@ public class ButtonDashExplosionSkill : BaseButton
         this.LoadPlayer();
         this.LoadTextMeshProUGUI();
         this.LoadPlayerController();
+        this.LoadRigidbody();
         this.SetExplosionRadius(this.dashExplosionData.ExplosionRadius);
         this.SetDashDistance(this.dashExplosionData.DashDistance);
         this.SetDashDuration(this.dashExplosionData.DashDuration);
@@ -51,6 +53,13 @@ public class ButtonDashExplosionSkill : BaseButton
     protected virtual void SetCanUseSkill(bool canUseSkill)
     {
         this.canUseSkill = canUseSkill;
+    }
+    protected virtual void LoadRigidbody()
+    {
+        if (this.playerController == null) return;
+        if (this.rb != null) return;
+        this.rb=this.playerController.GetComponent<Rigidbody>();
+        Debug.LogWarning(transform.name + " : LoadRigidbody");
     }
     protected virtual void LoadPlayer()
     {
@@ -105,11 +114,12 @@ public class ButtonDashExplosionSkill : BaseButton
         this.playerController.Animator.SetTrigger("IsRunGuard");
         while (this.elapsedTime <= this.dashDuration)
         {
-            this.player.position = Vector3.Lerp(posStart, posDestination, this.elapsedTime / this.dashDuration);
-            this.elapsedTime += Time.deltaTime;
+            Vector3 nextPos = Vector3.Lerp(posStart, posDestination, this.elapsedTime / this.dashDuration);
+            this.rb.MovePosition(nextPos);
+            this.elapsedTime += Time.fixedDeltaTime;
             yield return null;
         }
-        this.player.position = posDestination;
+        this.rb.MovePosition(posDestination);
         this.elapsedTime = 0f;
         this.canUseSkill = false;
     }
