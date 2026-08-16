@@ -48,7 +48,7 @@ public class PlayerController : BaseEntityController
     protected virtual void LoadFirePoint()
     {
         if (this.firePoint != null) return;
-        this.firePoint = transform.Find("FirePoint");
+        this.firePoint = GameObject.Find("FirePointShoot").transform;
         Debug.LogWarning(transform.name + " : LoadFirePoint");
     }
     

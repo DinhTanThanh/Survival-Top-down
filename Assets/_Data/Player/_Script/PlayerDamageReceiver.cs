@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerDamageReceiver : DamageReceiver
 {
+    [SerializeField] protected bool isExecuteDead;
     [SerializeField] protected PlayerController playerController;
     protected override void LoadComponent()
     {
@@ -16,5 +17,12 @@ public class PlayerDamageReceiver : DamageReceiver
         if (this.playerController != null) return;
         this.playerController = GetComponentInParent<PlayerController>();
         Debug.LogWarning(transform.name + " : LoadPlayerController");
+    }
+    private void Update()
+    {
+        if (this.isDead) return;
+        if (!this.isDead) return;
+        this.playerController.Animator.SetBool("IsDead", true);
+        this.isExecuteDead = true;
     }
 }

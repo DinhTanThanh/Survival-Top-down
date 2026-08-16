@@ -6,6 +6,12 @@ public class DamageReceiver : LoadMonoBehaviour
     [SerializeField] protected float hp;
     [SerializeField] protected int defence;
     [SerializeField] protected bool isDead;
+    [SerializeField] protected BaseEntityController baseEntityController;
+    protected override void LoadComponent()
+    {
+        base.LoadComponent();
+        this.LoadBaseEntityController();
+    }
     protected virtual void SetBaseHp(float baseHp)
     {
         this.baseHp = baseHp;
@@ -17,6 +23,12 @@ public class DamageReceiver : LoadMonoBehaviour
     protected virtual void SetDefence(int defence)
     {
         this.defence = defence;
+    }
+    protected virtual void LoadBaseEntityController()
+    {
+        if (this.baseEntityController != null) return;
+        this.baseEntityController=GetComponentInParent<BaseEntityController>();
+        Debug.LogWarning(transform.name + " : LoadBaseEntityController");
     }
     protected virtual float CalculateDefence(float damage)
     {

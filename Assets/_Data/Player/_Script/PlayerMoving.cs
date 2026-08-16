@@ -2,11 +2,12 @@ using UnityEngine;
 
 public class PlayerMoving : LoadMonoBehaviour
 {
-    [SerializeField] protected Rigidbody rb;
     [SerializeField] protected float horizontal;
     [SerializeField] protected float vertical;
     [SerializeField] protected float speedMovement;
     [SerializeField] protected float speedRotation;
+    [SerializeField] protected bool isCurrentlyRunning;
+    [SerializeField] protected Rigidbody rb;
     [SerializeField] protected PlayerController playerController;
     private Vector3 camForward;
     private Vector3 camRight;
@@ -54,11 +55,17 @@ public class PlayerMoving : LoadMonoBehaviour
         {
             movementPosition.Normalize();
         }
-        if (movementPosition != Vector3.zero)
+        bool isRuning = movementPosition != Vector3.zero;
+        if (isRuning)
         {
             Quaternion targetRotation = Quaternion.LookRotation(movementPosition);
             Quaternion newRotation = Quaternion.RotateTowards(this.rb.rotation, targetRotation, this.speedRotation * Time.fixedDeltaTime);
             this.rb.MoveRotation(newRotation);
+        }
+        if (isRuning != this.isCurrentlyRunning)
+        {
+            this.isCurrentlyRunning = isRuning;
+            this.playerController.Animator.SetBool("IsRunning", this.isCurrentlyRunning);
         }
         Vector3 moveDelta = movementPosition * this.speedMovement * Time.fixedDeltaTime;
         this.rb.MovePosition(this.rb.position + moveDelta);
