@@ -13,6 +13,10 @@ public class DamageReceiver : LoadMonoBehaviour
         base.LoadComponent();
         this.LoadBaseEntityController();
     }
+    public virtual void SetIsDead(bool isDead)
+    {
+        this.isDead = isDead;
+    }
     protected virtual void SetBaseHp(float baseHp)
     {
         this.baseHp = baseHp;
@@ -50,5 +54,11 @@ public class DamageReceiver : LoadMonoBehaviour
         if (!this.isDead) return;
         this.baseEntityController.Animator.SetTrigger("Dead");
         this.isExecuteDead = true;
+    }
+    protected virtual void Reborn()
+    {
+        this.isDead = false;
+        this.hp = this.baseHp;
+        this.isExecuteDead= false;
     }
 }

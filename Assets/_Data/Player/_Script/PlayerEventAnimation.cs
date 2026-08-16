@@ -53,7 +53,6 @@ public class PlayerEventAnimation : LoadMonoBehaviour
     }
     protected virtual void Explosion()
     {
-        Debug.Log("thuc hien llllll");
         this.explosion_light.transform.position = this.player.position;
         this.particlesystem.Play();
         Collider[] hitEnemies = Physics.OverlapSphere(this.player.position, this.explosionRedius);

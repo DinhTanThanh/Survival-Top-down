@@ -3,6 +3,10 @@ using UnityEngine;
 public class MeleeEnemyDamageReceiver : DamageReceiver
 {
     [SerializeField] protected MeleeEnemyController meleeEnemyController;
+    private void OnEnable()
+    {
+        this.Reborn();
+    }
     protected override void LoadComponent()
     {
         base.LoadComponent();
