@@ -3,6 +3,10 @@
 public class RangedEnemyMoving : BaseMoving
 {
     [SerializeField] protected float attackRange;
+    private void OnEnable()
+    {
+        this.isRuning = true;
+    }
     protected override void LoadComponent()
     {
         base.LoadComponent();
@@ -17,6 +21,10 @@ public class RangedEnemyMoving : BaseMoving
         if (Vector3.Distance(this.target.position, this.enemyRoot.position) > this.attackRange)
         {
             this.Moving();
+        }
+        else
+        {
+            Debug.Log("khong chay");
         }
     }
 }

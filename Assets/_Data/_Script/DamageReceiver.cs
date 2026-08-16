@@ -6,6 +6,7 @@ public class DamageReceiver : LoadMonoBehaviour
     [SerializeField] protected float hp;
     [SerializeField] protected int defence;
     [SerializeField] protected bool isDead;
+    [SerializeField] protected bool isExecuteDead;
     [SerializeField] protected BaseEntityController baseEntityController;
     protected override void LoadComponent()
     {
@@ -42,5 +43,12 @@ public class DamageReceiver : LoadMonoBehaviour
         {
             this.isDead = true;
         }
+    }
+    private void Update()
+    {
+        if (this.isExecuteDead) return;
+        if (!this.isDead) return;
+        this.baseEntityController.Animator.SetTrigger("Dead");
+        this.isExecuteDead = true;
     }
 }

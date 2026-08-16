@@ -1,9 +1,12 @@
+using Mono.Cecil.Cil;
+using System.Collections;
 using UnityEngine;
 
 public class MeleeEnemyAttack : LoadMonoBehaviour
 {
-    [SerializeField] protected bool isAttack;
     [SerializeField] protected float attackRange;
+    [SerializeField] protected bool isAttack;
+    [SerializeField] protected bool hasTriggeredAttack = false;
     [SerializeField] protected Transform target;
     [SerializeField] protected Transform enemyRoot;
     [SerializeField] protected MeleeEnemyController meleeEnemycontroller;
@@ -52,6 +55,17 @@ public class MeleeEnemyAttack : LoadMonoBehaviour
         if (Vector3.Distance(this.target.position, this.enemyRoot.position) > this.attackRange) return false;
         return true;
     }
+
+    public virtual void SetHasTriggeredAttack(bool hasTriggeredAttack)
+    {
+        this.hasTriggeredAttack = hasTriggeredAttack;
+    }
+
+    public virtual bool GetHasTriggeredAttack()
+    {
+        return this.hasTriggeredAttack;
+    }
+
     protected virtual void ExecuteMeleeAttack()
     {
         if (!this.IsReachedDistance()) return;
@@ -61,8 +75,10 @@ public class MeleeEnemyAttack : LoadMonoBehaviour
         float angle = Vector3.Angle(this.enemyRoot.forward, directionToTarget);
         if (angle > 25f) return;
         if (this.isAttack) return;
+        if (this.hasTriggeredAttack) return;
+
+        this.SetHasTriggeredAttack(true);
         this.meleeEnemycontroller.Animator.SetTrigger("Attack");
-        this.meleeEnemycontroller.MeleeEnemyMoving.SetSpeedMovement(0f);
-        this.SetIsAttack(true);
+        Debug.Log("2");
     }
 }
