@@ -5,6 +5,7 @@ public class BaseMoving : LoadMonoBehaviour
     [SerializeField] protected bool isRuning;
     [SerializeField] protected bool stateRuningCurrent;
     [SerializeField] protected float speedMovement;
+    [SerializeField] protected bool isForcedRunning;
     [SerializeField] protected Transform enemyRoot;
     [SerializeField] protected Transform target;
     [SerializeField] protected Rigidbody rb;
@@ -43,14 +44,22 @@ public class BaseMoving : LoadMonoBehaviour
         this.baseEntityController = GetComponentInParent<BaseEntityController>();
         Debug.LogWarning(transform.name + " : LoadBaseEntityController");
     }
+    public virtual void SetForcedRunning(bool isForced)
+    {
+        this.isForcedRunning = isForced;
+    }
+
     protected virtual void Moving()
     {
-        if (!this.isRuning) return;
+        //if (!this.isRuning) return;
         Vector3 direction = this.target.position - this.enemyRoot.position;
         direction.y = 0f;
-        this.enemyRoot.rotation = Quaternion.LookRotation(direction);
+        if (direction != Vector3.zero) 
+        {
+            this.enemyRoot.rotation = Quaternion.LookRotation(direction);
+        }
         Vector3 newPosition = Vector3.forward * this.speedMovement * Time.deltaTime;
-        bool isMoving = newPosition != Vector3.zero;
+        bool isMoving = newPosition != Vector3.zero || this.isForcedRunning;
         if (isMoving != this.stateRuningCurrent)
         {
             this.stateRuningCurrent = isMoving;

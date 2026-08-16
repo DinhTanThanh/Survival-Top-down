@@ -20,6 +20,7 @@ public class MeleeEnemyAttackCoolDown : CoolDown
         if (!this.meleeEnemyController.MeleeEnemyAttack.GetIsAttack()) return;
         if (!this.Timing()) return;
         this.meleeEnemyController.MeleeEnemyAttack.SetIsAttack(false);
+        this.meleeEnemyController.MeleeEnemyAttack.SetHasTriggeredAttack(false);
         this.meleeEnemyController.MeleeEnemyMoving.SetSpeedMovement(this.meleeEnemyController.EntitySO.baseSpeed);
     }
 }

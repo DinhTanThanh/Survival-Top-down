@@ -32,6 +32,9 @@ public class EventSpawnProjectile : LoadMonoBehaviour
     }
     public virtual void Spawn()
     {
-        SpawnProjectile.Instance.ExecuteSpawnPooling(this.projectilePrefab, this.pointer.position, this.transform.parent.rotation);
+        Quaternion rot = Quaternion.Euler(0, -8f, 0);
+        Quaternion rotCurrent = this.transform.rotation;
+        Quaternion newRot = rot * rotCurrent;
+        SpawnProjectile.Instance.ExecuteSpawnPooling(this.projectilePrefab, this.pointer.position, newRot);
     }
 }
