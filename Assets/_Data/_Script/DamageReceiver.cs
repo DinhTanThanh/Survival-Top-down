@@ -2,16 +2,26 @@ using UnityEngine;
 
 public class DamageReceiver : LoadMonoBehaviour
 {
+    [SerializeField] protected int defence;
     [SerializeField] protected float baseHp;
     [SerializeField] protected float hp;
-    [SerializeField] protected int defence;
+    [SerializeField] protected float damageMultiplier;
     [SerializeField] protected bool isDead;
     [SerializeField] protected bool isExecuteDead;
+    [SerializeField] protected float expReward;
     [SerializeField] protected BaseEntityController baseEntityController;
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadBaseEntityController();
+    }
+    protected virtual void SetDamageMultiplier(float damageMultiplier)
+    {
+        this.damageMultiplier = damageMultiplier;
+    }
+    protected virtual void SetExperienceReward(float expReward)
+    {
+        this.expReward = expReward;
     }
     public virtual void SetIsDead(bool isDead)
     {
@@ -48,7 +58,23 @@ public class DamageReceiver : LoadMonoBehaviour
             this.isDead = true;
         }
     }
-    private void Update()
+    public virtual void AddBaseHealth(float health)
+    {
+        this.baseHp+= health;
+    }
+    public virtual void AddHealth(float health)
+    {
+        this.hp += health;
+    }
+    public virtual void AddDefence(int defence)
+    {
+        this.defence+= defence;
+    }
+    public virtual void AddDamageMultiplier(float damageMultiplier)
+    {
+        this.damageMultiplier += damageMultiplier;
+    }
+    protected virtual void Update()
     {
         if (this.isExecuteDead) return;
         if (!this.isDead) return;

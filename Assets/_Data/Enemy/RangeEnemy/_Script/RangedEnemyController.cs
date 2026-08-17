@@ -5,15 +5,24 @@ public class RangedEnemyController : BaseEntityController
     [SerializeField] protected Transform pointer;
     [SerializeField] protected RangedEnemyAttack rangedEnemyAttack;
     [SerializeField] protected RangedEnemyMoving rangedEnemyMoving;
+    [SerializeField] protected PlayerController playercontroller;
     public Transform Pointer => pointer;
     public RangedEnemyAttack RangedEnemyAttack => rangedEnemyAttack;
     public RangedEnemyMoving RangedEnemyMoving => rangedEnemyMoving;
+    public PlayerController PlayerController => playercontroller;
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadPointer();
         this.LoadRangedEnemyAttack();
         this.LoadRangedEnemyMoving();
+        this.LoadPlayerController();
+    }
+    protected virtual void LoadPlayerController()
+    {
+        if (this.playercontroller != null) return;
+        this.playercontroller = FindFirstObjectByType<PlayerController>();
+        Debug.LogWarning(transform.name + " : LoadPlayerController");
     }
     protected virtual void LoadPointer()
     {

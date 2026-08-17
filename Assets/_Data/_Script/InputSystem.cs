@@ -7,6 +7,8 @@ public class InputSystem : MonoBehaviour
     [SerializeField] protected float horizontal;
     [SerializeField] protected float vertical;
     [SerializeField] protected InputAction moveAction;
+    [SerializeField] protected UIJoystick uiJoystick;
+
     public static InputSystem Instance => instance;
     private void Awake()
     {
@@ -23,6 +25,12 @@ public class InputSystem : MonoBehaviour
     private void Update()
     {
         Vector2 moveInput = this.moveAction.ReadValue<Vector2>();
+
+        if (this.uiJoystick != null && this.uiJoystick.InputVector != Vector2.zero)
+        {
+            moveInput = this.uiJoystick.InputVector;
+        }
+
         this.horizontal = moveInput.x;
         this.vertical = moveInput.y;
     }

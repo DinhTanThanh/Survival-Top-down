@@ -72,4 +72,9 @@ public class WeaponHitBox : LoadMonoBehaviour
         this.meleeEnemyController.Rb.MovePosition(posDestination);
         this.meleeEnemyController.MeleeEnemyMoving.SetForcedRunning(false);
     }
+    protected virtual void GoBackListEnemyDead()
+    {
+        this.transform.parent.gameObject.SetActive(false);
+        SpawnMeleeEnemy.Instance.GoBackList(this.transform.parent.gameObject);
+    }
 }
