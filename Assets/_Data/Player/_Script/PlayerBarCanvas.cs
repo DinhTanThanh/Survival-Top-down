@@ -1,17 +1,13 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerDamageReceiver : DamageReceiver
+public class PlayerBarCanvas : LoadMonoBehaviour
 {
     [SerializeField] protected PlayerController playerController;
+    public PlayerController PlayerController => playerController;
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadPlayerController();
-        this.SetBaseHp(this.playerController.EntitySO.baseHp);
-        this.SetHp(this.playerController.EntitySO.baseHp);
-        this.SetDamageMultiplier(this.playerController.EntitySO.damageMultiplier);
-        this.SetDefence(this.playerController.EntitySO.baseDefence);
     }
     protected virtual void LoadPlayerController()
     {

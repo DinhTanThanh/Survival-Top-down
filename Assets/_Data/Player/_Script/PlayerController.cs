@@ -9,6 +9,7 @@ public class PlayerController : BaseEntityController
     [SerializeField] protected ButtonAttack buttonAttack;
     [SerializeField] protected PlayerPoisonHandler playerPoisonHandler;
     [SerializeField] protected PlayerLevel playerLevel;
+    [SerializeField] protected PlayerShooting playerShooting;
     public GameObject Bullet => bullet;
     public Transform FirePoint => firePoint;
     public ShotData ShotData => shotData;
@@ -16,6 +17,7 @@ public class PlayerController : BaseEntityController
     public ButtonAttack ButtonAttack => buttonAttack;
     public PlayerPoisonHandler PlayerPoisonHandler => playerPoisonHandler;
     public PlayerLevel PlayerLevel=> playerLevel;
+    public PlayerShooting PlayerShooting => playerShooting;
     protected override void LoadComponent()
     {
         base.LoadComponent();
@@ -26,6 +28,7 @@ public class PlayerController : BaseEntityController
         this.LoadButtonAttack();
         this.LoadPlayerPoisonHandler();
         this.LoadPlayerLevel();
+        this.LoadPlayerShooting();
     }
     protected virtual void LoadLevelSO()
     {
@@ -69,5 +72,10 @@ public class PlayerController : BaseEntityController
         this.firePoint = GameObject.Find("FirePointShoot").transform;
         Debug.LogWarning(transform.name + " : LoadFirePoint");
     }
-    
+    protected virtual void LoadPlayerShooting()
+    {
+        if (this.playerShooting != null) return;
+        this.playerShooting=GetComponentInChildren<PlayerShooting>();
+        Debug.LogWarning(transform.name + " : LoadPlayerShooting");
+    }
 }

@@ -84,22 +84,16 @@ public class WaveSpawnManager : LoadMonoBehaviour
             int indexCurrent = this.indexPointerCurrent + 1;
             if (indexCurrent >= this.managerSpawnPoint.ListPointer.Count - 1) return;
             this.Reborn(indexCurrent);
-            Debug.Log("Vo");
         }
         this.ExecuteSpawnMeleeEnemy();
         this.ExecuteSpawnRangedEnemy();
     }
     protected virtual void ExecuteSpawnMeleeEnemy()
     {
-        Debug.Log("ExecuteSpawnMeleeEnemy");
-        Debug.Log(this.numberCurrentMeleeEnemy);
         if (this.numberCurrentMeleeEnemy <= 0) return;
         SpawnMeleeEnemy.Instance.ExecuteSpawnPooling(this.meleeEnemy, pointerCurrent.position, Quaternion.identity);
         this.numberCurrentMeleeEnemy--;
-        Debug.Log(this.numberCurrentMeleeEnemy);
         this.numberMeleeEnemyOnScene++;
-        Debug.Log(this.numberMeleeEnemyOnScene);
-        Debug.Log("==============================");
     }
     protected virtual void ExecuteSpawnRangedEnemy()
     {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerShooting : LoadMonoBehaviour
@@ -12,7 +13,9 @@ public class PlayerShooting : LoadMonoBehaviour
     [SerializeField] protected bool canFire;
     [SerializeField] protected GameObject bulletPrefab;
     [SerializeField] protected Transform firePoint;
+    [SerializeField] protected BaseChargeSystem baseChargeSystem;
     [SerializeField] protected PlayerController playerController;
+    [SerializeField] protected List<IChargeObserver> listChargeObserver=new List<IChargeObserver>();
     public float ChargeRegenTime => chargeRegenTime;
     public int MaxCharge => maxCharge;
     public int CurrentCharge
@@ -20,10 +23,12 @@ public class PlayerShooting : LoadMonoBehaviour
         get { return this.currentCharge; }
         set {this.currentCharge = value;}
     }
+    public BaseChargeSystem BaseChargeSystem => baseChargeSystem;
     public PlayerController PlayerController => playerController;
     protected override void LoadComponent()
     {
         base.LoadComponent();
+        this.LoadBaseChargeSystem();
         this.LoadPlayerController();
         this.GetBulletPrefab();
         this.GetFirePoint();
@@ -35,6 +40,17 @@ public class PlayerShooting : LoadMonoBehaviour
         this.SetArrayDirectionBullet(this.playerController.ShotData.bulletAngles);
         this.SetCanFire(true);
     }
+    public virtual void AddChargeObserver(IChargeObserver chargeObserver)
+    {
+        this.listChargeObserver.Add(chargeObserver);
+    }
+    protected virtual void OnChangeChargeUI()
+    {
+        foreach(IChargeObserver chargeObserver in this.listChargeObserver)
+        {
+            chargeObserver.UpdateCharge();
+        }
+    }
     private void Update()
     {
         if (this.canFire)
@@ -43,6 +59,7 @@ public class PlayerShooting : LoadMonoBehaviour
             if (!this.playerController.ButtonAttack.IsAttack) return;
             this.playerController.Animator.SetTrigger("Shoot");
             this.currentCharge--;
+            this.OnChangeChargeUI();
             this.canFire = false;
         }
         if (!this.Timing()) return;
@@ -58,11 +75,25 @@ public class PlayerShooting : LoadMonoBehaviour
             SpawnBullet.Instance.ExecuteSpawnPooling(this.bulletPrefab, this.firePoint.position, rot);
         }
     }
+    protected virtual void LoadBaseChargeSystem()
+    {
+        if (this.baseChargeSystem != null) return;
+        ;this.baseChargeSystem = GetComponentInChildren<BaseChargeSystem>();
+        Debug.LogWarning(transform.name + " : LoadBaseChargeSystem");
+    }
     protected virtual void LoadPlayerController()
     {
         if (this.playerController != null) return;
         this.playerController = GetComponentInParent<PlayerController>();
         Debug.LogWarning(transform.name + " : LoadPlayerController");
+    }
+    public virtual int GetCurrentCharge()
+    {
+        return this.currentCharge;
+    }
+    public virtual int GetMaxCharge()
+    {
+        return this.maxCharge;
     }
     protected virtual void GetBulletPrefab()
     {
