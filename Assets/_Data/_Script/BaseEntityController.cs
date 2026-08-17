@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BaseEntityController : LoadMonoBehaviour
@@ -7,11 +6,12 @@ public class BaseEntityController : LoadMonoBehaviour
     [SerializeField] protected EntitySO entitySO;
     [SerializeField] protected Animator animator;
     [SerializeField] protected DamageReceiver damageReceiver;
+    [SerializeField] protected WaveSpawnManager waveSpawnManager;
     public Transform Target => target;
-
     public EntitySO EntitySO => entitySO;
     public Animator Animator => animator;
     public DamageReceiver DamageReceiver => damageReceiver;
+    public WaveSpawnManager WaveSpawnManager => waveSpawnManager;
     protected override void LoadComponent()
     {
         base.LoadComponent();
@@ -19,6 +19,13 @@ public class BaseEntityController : LoadMonoBehaviour
         this.LoadEntitySO();
         this.LoadAnimator();
         this.LoadDamageReceiver();
+        this.LoadWaveSpawnManager();
+    }
+    protected virtual void LoadWaveSpawnManager()
+    {
+        if (this.waveSpawnManager != null) return;
+        this.waveSpawnManager=FindFirstObjectByType<WaveSpawnManager>();
+        Debug.LogWarning(transform.name + " : LoadWaveSpawnManager");
     }
     protected virtual void LoadDamageReceiver()
     {

@@ -9,6 +9,7 @@ public class PlayerDamageReceiver : DamageReceiver
         this.LoadPlayerController();
         this.SetBaseHp(this.playerController.EntitySO.baseHp);
         this.SetHp(this.playerController.EntitySO.baseHp);
+        this.SetDamageMultiplier(this.playerController.EntitySO.damageMultiplier);
         this.SetDefence(this.playerController.EntitySO.baseDefence);
     }
     protected virtual void LoadPlayerController()

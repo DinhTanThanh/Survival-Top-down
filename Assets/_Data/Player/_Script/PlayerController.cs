@@ -5,21 +5,39 @@ public class PlayerController : BaseEntityController
     [SerializeField] protected GameObject bullet;
     [SerializeField] protected Transform firePoint;
     [SerializeField] protected ShotData shotData;
+    [SerializeField] protected LevelGrowthData levelGrowthData;
     [SerializeField] protected ButtonAttack buttonAttack;
     [SerializeField] protected PlayerPoisonHandler playerPoisonHandler;
+    [SerializeField] protected PlayerLevel playerLevel;
     public GameObject Bullet => bullet;
     public Transform FirePoint => firePoint;
     public ShotData ShotData => shotData;
+    public LevelGrowthData LevelGrowthData => levelGrowthData;
     public ButtonAttack ButtonAttack => buttonAttack;
     public PlayerPoisonHandler PlayerPoisonHandler => playerPoisonHandler;
+    public PlayerLevel PlayerLevel=> playerLevel;
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadShotData();
+        this.LoadLevelSO();
         this.LoadFirePoint();
         this.LoadBullet();
         this.LoadButtonAttack();
         this.LoadPlayerPoisonHandler();
+        this.LoadPlayerLevel();
+    }
+    protected virtual void LoadLevelSO()
+    {
+        if (this.levelGrowthData != null) return;
+        this.levelGrowthData = Resources.Load<LevelGrowthData>("Level/" + transform.name + "LevelGrowthData");
+        Debug.LogWarning(transform.name + " : LoadLevelSO");
+    }
+    protected virtual void LoadPlayerLevel()
+    {
+        if (this.playerLevel != null) return;
+        this.playerLevel=GetComponentInChildren<PlayerLevel>();
+        Debug.LogWarning(transform.name + " : LoadPlayerLevel");
     }
     protected virtual void LoadShotData()
     {

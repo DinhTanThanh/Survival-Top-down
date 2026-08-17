@@ -5,15 +5,24 @@ public class MeleeEnemyController : BaseEntityController
     [SerializeField] protected Rigidbody rb;
     [SerializeField] protected MeleeEnemyAttack meleeEnemyAttack;
     [SerializeField] protected MeleeEnemyMoving meleeEnemyMoving;
+    [SerializeField] protected PlayerController playercontroller;
     public Rigidbody Rb => rb;
     public MeleeEnemyAttack MeleeEnemyAttack => meleeEnemyAttack;
     public MeleeEnemyMoving MeleeEnemyMoving => meleeEnemyMoving;
+    public PlayerController PlayerController=> playercontroller;
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadRigidbody();
         this.LoadMeleeEnemyAttack();
         this.LoadMeleeEnemyMoving();
+        this.LoadPlayerController();
+    }
+    protected virtual void LoadPlayerController()
+    {
+        if (this.playercontroller != null) return;
+        this.playercontroller=FindFirstObjectByType<PlayerController>();
+        Debug.LogWarning(transform.name + " : LoadPlayerController");
     }
     protected virtual void LoadRigidbody()
     {

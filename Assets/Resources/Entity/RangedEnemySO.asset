@@ -19,3 +19,4 @@ MonoBehaviour:
   baseDamage: 0
   damageMultiplier: 0
   attackRange: 3
+  expReward: 30
