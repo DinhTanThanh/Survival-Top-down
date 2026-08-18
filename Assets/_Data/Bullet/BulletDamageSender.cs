@@ -21,5 +21,7 @@ public class BulletDamageSender : DamageSender
         if (damageReceiver == null || damageReceiver is PlayerDamageReceiver) return;
         float damage = this.CalculateDamage();
         damageReceiver.ReduceHp(damage);
+        this.transform.gameObject.SetActive(false);
+        SpawnBullet.Instance.GoBackList(transform.gameObject);
     }
 }
