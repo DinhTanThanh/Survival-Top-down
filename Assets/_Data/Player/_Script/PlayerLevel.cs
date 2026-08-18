@@ -1,23 +1,33 @@
+using TMPro;
 using UnityEngine;
 
 public class PlayerLevel : LoadMonoBehaviour
 {
     [SerializeField] protected int level;
+    [SerializeField] protected int levelCurrent;
     [SerializeField] protected float expToNextLevel;
     [SerializeField] protected float expCurrent;
     [SerializeField] protected float healthIncreasePerLevel;
     [SerializeField] protected int defenceIncreasePerLevel;
     [SerializeField] protected float damageMultiplierIncreasePerLevel;
     [SerializeField] protected PlayerController playerController;
+    [SerializeField] protected TextMeshProUGUI textMeshProUGUI;
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadPlayerController();
+        this.LoadTextMeshProUGUI();
         this.SetbaseLevel(this.playerController.LevelGrowthData.BaseLevel);
         this.SetExperienceToNextLevel(this.playerController.LevelGrowthData.ExperienceToNextLevel);
         this.SetHealthIncreasePerLevel(this.playerController.LevelGrowthData.HealthIncreasePerLevel);
         this.SetDefenceIncreasePerLevel(this.playerController.LevelGrowthData.DefenceIncreasePerLevel);
         this.SetDamageMultiplierIncreasePerLevel(this.playerController.LevelGrowthData.DamageMultiplierIncreasePerLevel);
+    }
+    protected virtual void LoadTextMeshProUGUI()
+    {
+        if (this.textMeshProUGUI != null) return;
+        this.textMeshProUGUI=GetComponent<TextMeshProUGUI>();
+        Debug.LogWarning(transform.name + " : LoadTextMeshProUGUI");
     }
     protected virtual void LoadPlayerController()
     {
@@ -48,6 +58,11 @@ public class PlayerLevel : LoadMonoBehaviour
     private void Update()
     {
         this.CalculateLevel();
+        if (this.level != this.levelCurrent)
+        {
+            this.levelCurrent = this.level;
+            this.textMeshProUGUI.text = this.levelCurrent + "";
+        }
     }
     protected virtual void CalculateLevel()
     {

@@ -59,7 +59,7 @@ public class PlayerEventAnimation : LoadMonoBehaviour
         foreach (Collider collider in hitEnemies)
         {
             DamageReceiver dameReceiver = collider.transform.parent?.GetComponentInChildren<DamageReceiver>();
-            if (dameReceiver == null) continue;
+            if (dameReceiver == null ||dameReceiver is PlayerDamageReceiver) continue;
             dameReceiver.ReduceHp(this.baseDamage);
         }
     }

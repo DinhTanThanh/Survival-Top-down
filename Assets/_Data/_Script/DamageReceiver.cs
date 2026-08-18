@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DamageReceiver : LoadMonoBehaviour
@@ -10,10 +11,30 @@ public class DamageReceiver : LoadMonoBehaviour
     [SerializeField] protected bool isExecuteDead;
     [SerializeField] protected float expReward;
     [SerializeField] protected BaseEntityController baseEntityController;
+    [SerializeField] protected List<IHealthObserver> listHealthObserver = new List<IHealthObserver>();
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadBaseEntityController();
+    }
+    public virtual void AddHealthObserver(IHealthObserver healthObserver)
+    {
+        this.listHealthObserver.Add(healthObserver);
+    }
+    protected virtual void OnChangeUI()
+    {
+        foreach (IHealthObserver healthObserver in this.listHealthObserver)
+        {
+            healthObserver.UpdateHealthHp();
+        }
+    }
+    public virtual float GetBaseHp()
+    {
+        return this.baseHp;
+    }
+    public virtual float GetHp()
+    {
+        return this.hp;
     }
     protected virtual void SetDamageMultiplier(float damageMultiplier)
     {
@@ -53,6 +74,7 @@ public class DamageReceiver : LoadMonoBehaviour
     {
         damage=this.CalculateDefence(damage);
         this.hp = Mathf.Max(this.hp - damage,0);
+        this.OnChangeUI();
         if (this.hp <= 0)
         {
             this.isDead = true;
