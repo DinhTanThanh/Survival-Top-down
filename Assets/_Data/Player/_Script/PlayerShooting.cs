@@ -84,6 +84,9 @@ public class PlayerShooting : LoadMonoBehaviour
     protected virtual void AutoAimNearestEnemy()
     {
         if (this.playerController == null) return;
+        PlayerMoving playerMoving = this.playerController.GetComponentInChildren<PlayerMoving>();
+        if (playerMoving != null && playerMoving.IsDashing) return;
+
         Vector3 playerPos = this.playerController.transform.position;
         Vector3 playerForward = this.playerController.transform.forward;
         playerForward.y = 0f;

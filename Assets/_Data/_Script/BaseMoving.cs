@@ -60,11 +60,11 @@ public class BaseMoving : LoadMonoBehaviour
         }
         Vector3 newPosition = Vector3.forward * this.speedMovement * Time.deltaTime;
         bool isMoving = newPosition != Vector3.zero || this.isForcedRunning;
-        if (isMoving != this.stateRuningCurrent)
+        if (this.baseEntityController != null && this.baseEntityController.Animator != null)
         {
-            this.stateRuningCurrent = isMoving;
             this.baseEntityController.Animator.SetBool("IsRunning", isMoving);
         }
+        this.stateRuningCurrent = isMoving;
         this.enemyRoot.Translate(newPosition);
     }
 }

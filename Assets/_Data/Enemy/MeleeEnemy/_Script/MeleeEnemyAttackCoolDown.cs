@@ -9,6 +9,10 @@ public class MeleeEnemyAttackCoolDown : CoolDown
         this.SetTimeDelay(1f);
         this.LoadMeleeEnemyController();
     }
+    protected virtual void OnEnable()
+    {
+        this.timer = 0f;
+    }
     protected virtual void LoadMeleeEnemyController()
     {
         if (this.meleeEnemyController != null) return;
