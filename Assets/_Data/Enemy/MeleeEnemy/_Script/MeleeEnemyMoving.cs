@@ -7,6 +7,15 @@ public class MeleeEnemyMoving : BaseMoving
         base.LoadComponent();
         this.SetDetectionRange(10f);
     }
+    protected virtual void OnEnable()
+    {
+        if (this.baseEntityController != null && this.baseEntityController.EntitySO != null)
+        {
+            this.SetSpeedMovement(this.baseEntityController.EntitySO.baseSpeed);
+        }
+        this.isForcedRunning = false;
+        this.stateRuningCurrent = false;
+    }
     protected virtual void SetDetectionRange(float detectionRange)
     {
         this.detectionRange= detectionRange;

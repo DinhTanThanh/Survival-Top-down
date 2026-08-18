@@ -115,25 +115,81 @@ public class ButtonDashExplosionSkill : BaseButton
     }
     IEnumerator PerformDash()
     {
-        Vector3 posStart = this.player.position;
-        Vector3 posDestination = this.player.position + this.player.forward * this.dashDistance;
-        this.playerController.Animator.SetTrigger("IsRunGuard");
+        PlayerMoving playerMoving = this.playerController != null ? this.playerController.GetComponentInChildren<PlayerMoving>() : null;
 
-        PlayerMoving playerMoving = this.playerController.GetComponentInChildren<PlayerMoving>();
         if (playerMoving != null) playerMoving.IsDashing = true;
+        if (InputSystem.Instance != null) InputSystem.Instance.IsInputFrozen = true;
+
+        Camera mainCam = Camera.main;
+        Vector3 camForward = Vector3.forward;
+        if (mainCam != null)
+        {
+            camForward = mainCam.transform.forward;
+            camForward.y = 0f;
+            if (camForward == Vector3.zero) camForward = Vector3.forward;
+            camForward.Normalize();
+        }
+
+        Vector3 dashDirection = this.player != null ? this.player.forward : transform.forward;
+        dashDirection.y = 0f;
+
+        if (Vector3.Dot(dashDirection, camForward) < -0.1f)
+        {
+            dashDirection = camForward;
+        }
+
+        if (dashDirection == Vector3.zero) dashDirection = camForward;
+        dashDirection.Normalize();
+
+        Vector3 posStart = this.rb != null ? this.rb.position : (this.player != null ? this.player.position : transform.position);
+        Vector3 posDestination = posStart + dashDirection * this.dashDistance;
+        Quaternion dashRotation = Quaternion.LookRotation(dashDirection);
+
+        if (this.playerController != null && this.playerController.Animator != null)
+        {
+            this.playerController.Animator.SetTrigger("IsRunGuard");
+        }
 
         this.elapsedTime = 0f;
         while (this.elapsedTime <= this.dashDuration)
         {
-            Vector3 nextPos = Vector3.Lerp(posStart, posDestination, this.elapsedTime / this.dashDuration);
-            this.rb.MovePosition(nextPos);
+            if (this.rb != null)
+            {
+                this.rb.linearVelocity = Vector3.zero;
+                this.rb.MoveRotation(dashRotation);
+            }
+
+            float t = this.dashDuration > 0f ? (this.elapsedTime / this.dashDuration) : 1f;
+            Vector3 nextPos = Vector3.Lerp(posStart, posDestination, t);
+
+            if (this.rb != null)
+            {
+                this.rb.MovePosition(nextPos);
+            }
+            else if (this.player != null)
+            {
+                this.player.position = nextPos;
+            }
+
             this.elapsedTime += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
-        this.rb.MovePosition(posDestination);
+
+        if (this.rb != null)
+        {
+            this.rb.linearVelocity = Vector3.zero;
+            this.rb.MoveRotation(dashRotation);
+            this.rb.MovePosition(posDestination);
+        }
+        else if (this.player != null)
+        {
+            this.player.position = posDestination;
+        }
+
         this.elapsedTime = 0f;
 
         if (playerMoving != null) playerMoving.IsDashing = false;
+        if (InputSystem.Instance != null) InputSystem.Instance.IsInputFrozen = false;
         this.canUseSkill = false;
     }
     private void OnDrawGizmosSelected()

@@ -6,10 +6,16 @@ public class InputSystem : MonoBehaviour
     private static InputSystem instance;
     [SerializeField] protected float horizontal;
     [SerializeField] protected float vertical;
+    [SerializeField] protected bool isInputFrozen;
     [SerializeField] protected InputAction moveAction;
     [SerializeField] protected UIJoystick uiJoystick;
 
     public static InputSystem Instance => instance;
+    public bool IsInputFrozen
+    {
+        get => isInputFrozen;
+        set => isInputFrozen = value;
+    }
 
     private void Awake()
     {
@@ -63,6 +69,13 @@ public class InputSystem : MonoBehaviour
 
     private void Update()
     {
+        if (this.isInputFrozen)
+        {
+            this.horizontal = 0f;
+            this.vertical = 0f;
+            return;
+        }
+
         Vector2 moveInput = Vector2.zero;
 
         if (this.moveAction != null && this.moveAction.enabled)

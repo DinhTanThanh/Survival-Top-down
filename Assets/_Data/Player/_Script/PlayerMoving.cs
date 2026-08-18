@@ -41,6 +41,13 @@ public class PlayerMoving : LoadMonoBehaviour
     }
     private void Update()
     {
+        if (this.isDashing)
+        {
+            this.horizontal = 0f;
+            this.vertical = 0f;
+            return;
+        }
+
         this.horizontal = InputSystem.Instance.GetHorizontal();
         this.vertical = InputSystem.Instance.GetVertical();
 
