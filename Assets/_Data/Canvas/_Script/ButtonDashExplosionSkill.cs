@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 public class ButtonDashExplosionSkill : BaseButton
@@ -93,6 +94,11 @@ public class ButtonDashExplosionSkill : BaseButton
     }
     private void Update()
     {
+        if (Keyboard.current != null && (Keyboard.current.lKey.wasPressedThisFrame || Keyboard.current.leftShiftKey.wasPressedThisFrame))
+        {
+            this.ExecuteDashExplosionSkill();
+        }
+
         if (this.canUseSkill) return;
         if (!this.Timing())
         {

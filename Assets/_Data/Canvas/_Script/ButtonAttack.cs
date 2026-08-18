@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class ButtonAttack : BaseButton
 {
@@ -35,5 +35,19 @@ public class ButtonAttack : BaseButton
     public virtual void SetIsAttack(bool isAttack)
     {
         this.isAttack = isAttack;
+    }
+    private void Update()
+    {
+        if (Keyboard.current != null)
+        {
+            if (Keyboard.current.spaceKey.isPressed || Keyboard.current.jKey.isPressed)
+            {
+                this.isAttack = true;
+            }
+            else if (Keyboard.current.spaceKey.wasReleasedThisFrame || Keyboard.current.jKey.wasReleasedThisFrame)
+            {
+                this.isAttack = false;
+            }
+        }
     }
 }

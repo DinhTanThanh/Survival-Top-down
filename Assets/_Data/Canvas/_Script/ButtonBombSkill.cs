@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ButtonBombSkill : BaseButton
 {
@@ -63,6 +64,11 @@ public class ButtonBombSkill : BaseButton
     }
     private void Update()
     {
+        if (Keyboard.current != null && Keyboard.current.kKey.wasPressedThisFrame)
+        {
+            this.ExecuteBombSkill();
+        }
+
         if (this.canUseSkill) return;
         if (!this.Timing())
         {
