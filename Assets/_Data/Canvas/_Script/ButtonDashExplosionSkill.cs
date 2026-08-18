@@ -112,15 +112,22 @@ public class ButtonDashExplosionSkill : BaseButton
         Vector3 posStart = this.player.position;
         Vector3 posDestination = this.player.position + this.player.forward * this.dashDistance;
         this.playerController.Animator.SetTrigger("IsRunGuard");
+
+        PlayerMoving playerMoving = this.playerController.GetComponentInChildren<PlayerMoving>();
+        if (playerMoving != null) playerMoving.IsDashing = true;
+
+        this.elapsedTime = 0f;
         while (this.elapsedTime <= this.dashDuration)
         {
             Vector3 nextPos = Vector3.Lerp(posStart, posDestination, this.elapsedTime / this.dashDuration);
             this.rb.MovePosition(nextPos);
             this.elapsedTime += Time.fixedDeltaTime;
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
         this.rb.MovePosition(posDestination);
         this.elapsedTime = 0f;
+
+        if (playerMoving != null) playerMoving.IsDashing = false;
         this.canUseSkill = false;
     }
     private void OnDrawGizmosSelected()

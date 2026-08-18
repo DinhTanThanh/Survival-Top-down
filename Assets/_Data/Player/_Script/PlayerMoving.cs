@@ -7,10 +7,18 @@ public class PlayerMoving : LoadMonoBehaviour
     [SerializeField] protected float speedMovement;
     [SerializeField] protected float speedRotation;
     [SerializeField] protected bool isCurrentlyRunning;
+    [SerializeField] protected bool isDashing;
     [SerializeField] protected Rigidbody rb;
     [SerializeField] protected PlayerController playerController;
     private Vector3 camForward;
     private Vector3 camRight;
+
+    public bool IsDashing
+    {
+        get => isDashing;
+        set => isDashing = value;
+    }
+
     protected override void LoadComponent()
     {
         base.LoadComponent();
@@ -35,17 +43,27 @@ public class PlayerMoving : LoadMonoBehaviour
     {
         this.horizontal = InputSystem.Instance.GetHorizontal();
         this.vertical = InputSystem.Instance.GetVertical();
-        Transform camTransform = Camera.main.transform;
-        this.camForward = camTransform.forward;
-        this.camRight = camTransform.right;
 
-        camForward.y = 0f;
-        camRight.y = 0f;
-        camForward.Normalize();
-        camRight.Normalize();
+        Camera mainCam = Camera.main;
+        if (mainCam != null)
+        {
+            Transform camTransform = mainCam.transform;
+            this.camForward = camTransform.forward;
+            this.camRight = camTransform.right;
+            camForward.y = 0f;
+            camRight.y = 0f;
+            camForward.Normalize();
+            camRight.Normalize();
+        }
+        else
+        {
+            this.camForward = Vector3.forward;
+            this.camRight = Vector3.right;
+        }
     }
     private void FixedUpdate()
     {
+        if (this.isDashing) return;
         this.Moving();
     }
     protected virtual void Moving()
@@ -55,19 +73,20 @@ public class PlayerMoving : LoadMonoBehaviour
         {
             movementPosition.Normalize();
         }
-        bool isRuning = movementPosition != Vector3.zero;
-        if (isRuning)
+        bool isRunning = movementPosition != Vector3.zero;
+        if (isRunning)
         {
             Quaternion targetRotation = Quaternion.LookRotation(movementPosition);
             Quaternion newRotation = Quaternion.RotateTowards(this.rb.rotation, targetRotation, this.speedRotation * Time.fixedDeltaTime);
             this.rb.MoveRotation(newRotation);
         }
-        if (isRuning != this.isCurrentlyRunning)
+        if (isRunning != this.isCurrentlyRunning)
         {
-            this.isCurrentlyRunning = isRuning;
+            this.isCurrentlyRunning = isRunning;
             this.playerController.Animator.SetBool("IsRunning", this.isCurrentlyRunning);
         }
-        Vector3 moveDelta = movementPosition * this.speedMovement * Time.fixedDeltaTime;
+        Vector3 moveDirection = this.rb.rotation * Vector3.forward;
+        Vector3 moveDelta = moveDirection * (movementPosition.magnitude * this.speedMovement * Time.fixedDeltaTime);
         this.rb.MovePosition(this.rb.position + moveDelta);
     }
     protected virtual void SetSpeedMovement(float speedMovement)
