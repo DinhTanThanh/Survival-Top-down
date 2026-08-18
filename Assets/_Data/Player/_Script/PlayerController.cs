@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class PlayerController : BaseEntityController
 {
     [SerializeField] protected GameObject bullet;

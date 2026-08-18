@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class MeleeEnemyDamageReceiver : DamageReceiver
 {
     [SerializeField] protected MeleeEnemyController meleeEnemyController;

@@ -13,7 +13,7 @@ public class MeleeEnemyDamageSender : DamageSender
     private void OnTriggerEnter(Collider other)
     {
         DamageReceiver dameReceiver=other.transform.parent?.GetComponentInChildren<DamageReceiver>();
-        if (dameReceiver == null) return;
+        if (dameReceiver == null || dameReceiver is MeleeEnemyDamageReceiver ||dameReceiver is RangedEnemyDamageReceiver) return;
         float damage = this.CalculateDamage();
         dameReceiver.ReduceHp(damage);
     }

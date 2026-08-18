@@ -19,7 +19,7 @@ public class ProjectileDamageSender : DamageSender
     private void OnTriggerEnter(Collider other)
     {
         DamageReceiver damageReceiver = other.transform.parent?.GetComponentInChildren<DamageReceiver>();
-        if (damageReceiver == null || damageReceiver is RangedEnemyDamageReceiver) return;
+        if (damageReceiver == null || damageReceiver is RangedEnemyDamageReceiver || damageReceiver is MeleeEnemyDamageReceiver) return;
         float damage = this.CalculateDamage();
         damageReceiver.ReduceHp(damage);
         PlayerPoisonHandler playerPoisonHandler = other.transform.parent?.GetComponentInChildren<PlayerPoisonHandler>();

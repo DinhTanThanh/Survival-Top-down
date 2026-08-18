@@ -33,7 +33,7 @@ public class BombEventAnimation : LoadMonoBehaviour
         foreach (Collider collider in hitEnemies)
         {
             DamageReceiver damageReceiver = collider.transform.parent?.GetComponentInChildren<DamageReceiver>();
-            if (damageReceiver == null) continue;
+            if (damageReceiver == null || damageReceiver is PlayerDamageReceiver) continue;
             damageReceiver.ReduceHp(this.baseDamage);
         }
     }
