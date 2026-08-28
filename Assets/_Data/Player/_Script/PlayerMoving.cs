@@ -6,19 +6,10 @@ public class PlayerMoving : LoadMonoBehaviour
     [SerializeField] protected float vertical;
     [SerializeField] protected float speedMovement;
     [SerializeField] protected float speedRotation;
-    [SerializeField] protected bool isCurrentlyRunning;
-    [SerializeField] protected bool isDashing;
     [SerializeField] protected Rigidbody rb;
     [SerializeField] protected PlayerController playerController;
     private Vector3 camForward;
     private Vector3 camRight;
-
-    public bool IsDashing
-    {
-        get => isDashing;
-        set => isDashing = value;
-    }
-
     protected override void LoadComponent()
     {
         base.LoadComponent();
@@ -41,13 +32,6 @@ public class PlayerMoving : LoadMonoBehaviour
     }
     private void Update()
     {
-        if (this.isDashing)
-        {
-            this.horizontal = 0f;
-            this.vertical = 0f;
-            return;
-        }
-
         this.horizontal = InputSystem.Instance.GetHorizontal();
         this.vertical = InputSystem.Instance.GetVertical();
 
@@ -68,30 +52,17 @@ public class PlayerMoving : LoadMonoBehaviour
             this.camRight = Vector3.right;
         }
     }
-    private void FixedUpdate()
-    {
-        if (this.isDashing) return;
-        this.Moving();
-    }
-    protected virtual void Moving()
+    public virtual void Moving()
     {
         Vector3 movementPosition = (camForward * this.vertical) + (camRight * this.horizontal);
         if (movementPosition.magnitude > 1f)
         {
             movementPosition.Normalize();
         }
-        bool isRunning = movementPosition != Vector3.zero;
-        if (isRunning)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(movementPosition);
-            Quaternion newRotation = Quaternion.RotateTowards(this.rb.rotation, targetRotation, this.speedRotation * Time.fixedDeltaTime);
-            this.rb.MoveRotation(newRotation);
-        }
-        if (isRunning != this.isCurrentlyRunning)
-        {
-            this.isCurrentlyRunning = isRunning;
-            this.playerController.Animator.SetBool("IsRunning", this.isCurrentlyRunning);
-        }
+        Quaternion targetRotation = Quaternion.LookRotation(movementPosition);
+        Quaternion newRotation = Quaternion.RotateTowards(this.rb.rotation, targetRotation, this.speedRotation * Time.fixedDeltaTime);
+        this.rb.MoveRotation(newRotation);
+
         Vector3 moveDirection = this.rb.rotation * Vector3.forward;
         Vector3 moveDelta = moveDirection * (movementPosition.magnitude * this.speedMovement * Time.fixedDeltaTime);
         this.rb.MovePosition(this.rb.position + moveDelta);

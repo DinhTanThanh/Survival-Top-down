@@ -22,13 +22,14 @@ public class RangedEnemyDamageReceiver : DamageReceiver
         this.rangeEnemyController = GetComponentInParent<RangedEnemyController>();
         Debug.LogWarning(transform.name + " : LoadRangeEnemyController");
     }
-    protected override void Update()
+    public override void ExecuteDead()
     {
-        if (this.isExecuteDead) return;
-        if (!this.isDead) return;
-        this.baseEntityController.Animator.SetTrigger("Dead");
         this.rangeEnemyController.PlayerController.PlayerLevel.AddExpReward(this.expReward);
-        this.isExecuteDead = true;
         this.rangeEnemyController.WaveSpawnManager.ReduceNumberRangedEnemyOnScene();
+    }
+    public override void Reborn()
+    {
+        base.Reborn();
+        this.rangeEnemyController.RangedEnemyAttack.SetAttack(true);
     }
 }

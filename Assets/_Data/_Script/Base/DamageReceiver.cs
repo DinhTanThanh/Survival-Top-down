@@ -1,0 +1,115 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class DamageReceiver : LoadMonoBehaviour
+{
+    [SerializeField] protected int defence;
+    [SerializeField] protected float baseHp;
+    [SerializeField] protected float hp;
+    [SerializeField] protected float damageMultiplier;
+    [SerializeField] protected bool isDead;
+    [SerializeField] protected float expReward;
+    [SerializeField] protected BaseEntityController baseEntityController;
+    [SerializeField] protected List<IHealthObserver> listHealthObserver = new List<IHealthObserver>();
+    protected override void LoadComponent()
+    {
+        base.LoadComponent();
+        this.LoadBaseEntityController();
+    }
+    protected virtual void LoadBaseEntityController()
+    {
+        if (this.baseEntityController != null) return;
+        this.baseEntityController = GetComponentInParent<BaseEntityController>();
+        Debug.LogWarning(transform.name + " : LoadBaseEntityController");
+    }
+    protected virtual float CalculateDefence(float damage)
+    {
+        return Mathf.Max(damage - this.defence, 0);
+    }
+    public virtual void ReduceHp(float damage)
+    {
+        damage = this.CalculateDefence(damage);
+        this.hp = Mathf.Max(this.hp - damage, 0);
+        this.OnChangeUI();
+        if (this.hp <= 0)
+        {
+            this.isDead = true;
+        }
+    }
+    public virtual void ExecuteDead()
+    {
+    }
+    public virtual void AddHealthObserver(IHealthObserver healthObserver)
+    {
+        this.listHealthObserver.Add(healthObserver);
+    }
+    protected virtual void OnChangeUI()
+    {
+        foreach (IHealthObserver healthObserver in this.listHealthObserver)
+        {
+            healthObserver.UpdateHealthHp();
+        }
+    }
+    public virtual bool GetIsDead()
+    {
+        return this.isDead;
+    }
+    public virtual float GetBaseHp()
+    {
+        return this.baseHp;
+    }
+    public virtual float GetHp()
+    {
+        return this.hp;
+    }
+    protected virtual void SetDamageMultiplier(float damageMultiplier)
+    {
+        this.damageMultiplier = damageMultiplier;
+    }
+    protected virtual void SetExperienceReward(float expReward)
+    {
+        this.expReward = expReward;
+    }
+    public virtual void SetIsDead(bool isDead)
+    {
+        this.isDead = isDead;
+    }
+    protected virtual void SetBaseHp(float baseHp)
+    {
+        this.baseHp = baseHp;
+    }
+    protected virtual void SetHp(float hp)
+    {
+        this.hp = hp;
+    }
+    protected virtual void SetDefence(int defence)
+    {
+        this.defence = defence;
+    }
+    
+    public virtual void AddBaseHealth(float health)
+    {
+        if (this.isDead) return;
+        this.baseHp+= health;
+    }
+    public virtual void AddHealth(float health)
+    {
+        if (this.isDead) return;
+        this.hp += health;
+    }
+    public virtual void AddDefence(int defence)
+    {
+        if (this.isDead) return;
+        this.defence+= defence;
+    }
+    public virtual void AddDamageMultiplier(float damageMultiplier)
+    {
+        if (this.isDead) return;
+        this.damageMultiplier += damageMultiplier;
+    }
+    public virtual void Reborn()
+    {
+        this.isDead = false;
+        this.hp = this.baseHp;
+    }
+}

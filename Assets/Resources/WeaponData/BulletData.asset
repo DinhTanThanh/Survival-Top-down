@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb7d7b7d55c58f244bc43e1faf119be8, type: 3}
   m_Name: BulletData
   m_EditorClassIdentifier: 
-  baseDamage: 10
+  baseDamage: 30
   damageMultiplier: 0
   bulletsPerShot: 3
   bulletAngles:
@@ -20,7 +20,7 @@ MonoBehaviour:
   - 0
   - 15
   fireCooldown: 0.5
-  maxCharge: 3
-  chargeRegenTime: 3
+  maxCharge: 6
+  chargeRegenTime: 0.6
   moveSpeed: 15
   maxDistance: 5

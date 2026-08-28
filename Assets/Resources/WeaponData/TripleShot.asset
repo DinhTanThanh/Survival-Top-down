@@ -18,5 +18,5 @@ MonoBehaviour:
   - 0
   - 15
   fireCooldown: 0.5
-  maxCharge: 3
-  chargeRegenTime: 3
+  maxCharge: 6
+  chargeRegenTime: 0.6

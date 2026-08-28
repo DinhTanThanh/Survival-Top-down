@@ -21,13 +21,14 @@ public class MeleeEnemyDamageReceiver : DamageReceiver
         this.meleeEnemyController = GetComponentInParent<MeleeEnemyController>();
         Debug.LogWarning(transform.name + " : LoadMeleeEnemyController");
     }
-    protected override void Update()
+    public override void ExecuteDead()
     {
-        if (this.isExecuteDead) return;
-        if (!this.isDead) return;
-        this.baseEntityController.Animator.SetTrigger("Dead");
         this.meleeEnemyController.PlayerController.PlayerLevel.AddExpReward(this.expReward);
-        this.isExecuteDead = true;
         this.meleeEnemyController.WaveSpawnManager.ReduceNumberMeleeEnemyOnScene();
+    }
+    public override void Reborn()
+    {
+        base.Reborn();
+        this.meleeEnemyController.MeleeEnemyAttack.SetIsAttack(true);
     }
 }

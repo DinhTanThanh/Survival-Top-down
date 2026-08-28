@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerDamageReceiver : DamageReceiver
 {
@@ -7,7 +8,6 @@ public class PlayerDamageReceiver : DamageReceiver
     [SerializeField] protected TextMeshProUGUI deadNoticeText;
     [SerializeField] protected string deathMessage = "PLAYER DIED (KEEP PLAYING)";
     [SerializeField] protected bool hasShownNotice = false;
-
     protected override void LoadComponent()
     {
         base.LoadComponent();
@@ -36,7 +36,7 @@ public class PlayerDamageReceiver : DamageReceiver
         }
     }
 
-    protected override void Update()
+    protected void Update()
     {
         if (this.isDead)
         {

@@ -1,30 +1,22 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class RangedEnemyMoving : BaseMoving
 {
-    [SerializeField] protected float attackRange;
-    private void OnEnable()
-    {
-        this.isRuning = true;
-    }
     protected override void LoadComponent()
     {
         base.LoadComponent();
-        this.SetAttackRange(this.baseEntityController.EntitySO.attackRange);
+        this.SetAttackRanged(this.baseEntityController.EntitySO.attackRange);
     }
-    protected virtual void SetAttackRange(float attackRange)
+    public virtual void RangedMoving()
     {
-        this.attackRange = attackRange;
-    }
-    private void FixedUpdate()
-    {
-        if (Vector3.Distance(this.target.position, this.enemyRoot.position) > this.attackRange)
+        if (!this.IsReachedLimit())
         {
             this.Moving();
         }
-        else
-        {
-            Debug.Log("khong chay");
-        }
+    }
+    public virtual bool IsReachedLimit()
+    {
+        if (Vector3.Distance(this.enemyRoot.position, this.target.position) > (this.attackRange - 0.3f)) return false;
+        return true;
     }
 }

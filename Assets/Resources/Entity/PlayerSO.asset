@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: PlayerSO
   m_EditorClassIdentifier: 
   baseHp: 500
-  baseSpeed: 2
-  baseRotation: 180
+  baseSpeed: 4.5
+  baseRotation: 360
   baseDefence: 0
   baseDamage: 0
+  damageMultiplier: 0
   attackRange: 10
+  expReward: 0

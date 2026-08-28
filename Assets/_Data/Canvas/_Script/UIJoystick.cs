@@ -24,20 +24,33 @@ public class UIJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
     public void OnDrag(PointerEventData eventData)
     {
         Vector2 position;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(this.joystickBackground, eventData.position, eventData.pressEventCamera, out position);
-        position.x = (position.x / this.joystickBackground.sizeDelta.x) * 2;
-        position.y = (position.y / this.joystickBackground.sizeDelta.y) * 2;
-        this.inputVector = new Vector2(position.x, position.y);
-        this.inputVector = (this.inputVector.magnitude > 1.0f) ? this.inputVector.normalized : this.inputVector;
-        this.joystickHandle.anchoredPosition = new Vector2(
-            this.inputVector.x * this.handleLimit, 
-            this.inputVector.y * this.handleLimit
-        );
-    }
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(this.joystickBackground, eventData.position, eventData.pressEventCamera, out position))
+        {
+            Vector2 pivotOffset = new Vector2(
+                (0.5f - this.joystickBackground.pivot.x) * this.joystickBackground.rect.width,
+                (0.5f - this.joystickBackground.pivot.y) * this.joystickBackground.rect.height
+            );
+            
+            position -= pivotOffset;
+
+            position.x = (position.x / this.joystickBackground.rect.width) * 2;
+            position.y = (position.y / this.joystickBackground.rect.height) * 2;
+            
+            this.inputVector = new Vector2(position.x, position.y);
+            this.inputVector = (this.inputVector.magnitude > 1.0f) ? this.inputVector.normalized : this.inputVector;
+            
+            this.joystickHandle.anchoredPosition = new Vector2(
+                this.inputVector.x * this.handleLimit, 
+                this.inputVector.y * this.handleLimit
+            );
+        }
+    }   
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        Vector2 newPos = Vector2.zero;
+        newPos.y = 9f;
         this.inputVector = Vector2.zero;
-        this.joystickHandle.anchoredPosition = Vector2.zero;
+        this.joystickHandle.anchoredPosition = newPos;
     }
 }

@@ -4,6 +4,11 @@ public class RangedHealthBar : BaseSliderBar, IHealthObserver
 {
     [SerializeField] protected RangedBarCanvas rangedBarCanvas;
     [SerializeField] protected DamageReceiver damageReceiver;
+    private void OnEnable()
+    {
+        this.damageReceiver.Reborn();
+        this.UpdateHealthHp();
+    }
     private void Start()
     {
         if (this.damageReceiver == null) return;

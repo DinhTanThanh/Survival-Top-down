@@ -4,6 +4,10 @@ public class PlayerChargeBar : BaseSliderBar,IChargeObserver
 {
     [SerializeField] protected PlayerBarCanvas playerBarCanvas;
     [SerializeField] protected PlayerShooting playerShooting;
+    private void OnEnable()
+    {
+        this.UpdateCharge();
+    }
     private void Start()
     {
         if (this.playerShooting == null) return;

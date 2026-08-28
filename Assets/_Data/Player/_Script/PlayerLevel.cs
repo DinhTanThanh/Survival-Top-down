@@ -137,6 +137,7 @@ public class PlayerLevel : LoadMonoBehaviour
     {
         if (this.expCurrent < this.expToNextLevel) return;
         this.expCurrent -= this.expToNextLevel;
+        this.expToNextLevel += 50;
         this.level++;
         this.LeveUp();
     }
@@ -149,6 +150,7 @@ public class PlayerLevel : LoadMonoBehaviour
     }
     public virtual void AddExpReward(float expReward)
     {
+        if (this.playerController.DamageReceiver.GetIsDead()) return;
         this.expCurrent += expReward;
     }
 }

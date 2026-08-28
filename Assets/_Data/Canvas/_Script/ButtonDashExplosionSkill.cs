@@ -2,7 +2,6 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 public class ButtonDashExplosionSkill : BaseButton
 {
@@ -13,12 +12,16 @@ public class ButtonDashExplosionSkill : BaseButton
     [SerializeField] protected float dashDistance;
     [SerializeField] protected float dashDuration;
     [SerializeField] protected bool canUseSkill;
+    [SerializeField] protected bool isElapsed;
+    [SerializeField] protected bool isPressedDash;
     [SerializeField] protected Transform player;
     [SerializeField] protected GameObject rangeIndicator;
     [SerializeField] protected Rigidbody rb;
     [SerializeField] protected TextMeshProUGUI textMeshProUGUI;
     [SerializeField] protected DashExplosionData dashExplosionData;
     [SerializeField] protected PlayerController playerController;
+    protected Vector3 posStart;
+    protected Vector3 posDestination;
     public SkillData SkillData => dashExplosionData;
     protected override void LoadComponent()
     {
@@ -37,11 +40,11 @@ public class ButtonDashExplosionSkill : BaseButton
     }
     protected virtual void SetExplosionRadius(float explosionRadius)
     {
-        this.explosionRedius= explosionRadius;
+        this.explosionRedius = explosionRadius;
     }
     protected virtual void SetDashDuration(float dashDuration)
     {
-        this.dashDuration = dashDuration;   
+        this.dashDuration = dashDuration;
     }
     protected virtual void SetDashDistance(float dashDistance)
     {
@@ -59,7 +62,7 @@ public class ButtonDashExplosionSkill : BaseButton
     {
         if (this.playerController == null) return;
         if (this.rb != null) return;
-        this.rb=this.playerController.GetComponent<Rigidbody>();
+        this.rb = this.playerController.GetComponent<Rigidbody>();
         Debug.LogWarning(transform.name + " : LoadRigidbody");
     }
     protected virtual void LoadPlayer()
@@ -94,9 +97,9 @@ public class ButtonDashExplosionSkill : BaseButton
     }
     private void Update()
     {
-        if (Keyboard.current != null && (Keyboard.current.lKey.wasPressedThisFrame || Keyboard.current.leftShiftKey.wasPressedThisFrame))
+        if(Keyboard.current!=null && Keyboard.current.lKey.isPressed)
         {
-            this.ExecuteDashExplosionSkill();
+            this.EnableIsPressDash();
         }
 
         if (this.canUseSkill) return;
@@ -108,89 +111,48 @@ public class ButtonDashExplosionSkill : BaseButton
         this.textMeshProUGUI.text = "";
         this.canUseSkill = true;
     }
-    public virtual void ExecuteDashExplosionSkill()
+    private void FixedUpdate()
     {
-        if (!this.canUseSkill) return;
-        StartCoroutine(PerformDash());
+        if (this.isPressedDash)
+        {
+            this.ExecuteDashExplosionSkill();
+        }
     }
-    IEnumerator PerformDash()
+    protected void  ExecuteDashExplosionSkill()
     {
-        PlayerMoving playerMoving = this.playerController != null ? this.playerController.GetComponentInChildren<PlayerMoving>() : null;
-
-        if (playerMoving != null) playerMoving.IsDashing = true;
-        if (InputSystem.Instance != null) InputSystem.Instance.IsInputFrozen = true;
-
-        Camera mainCam = Camera.main;
-        Vector3 camForward = Vector3.forward;
-        if (mainCam != null)
+        if (!this.isElapsed)
         {
-            camForward = mainCam.transform.forward;
-            camForward.y = 0f;
-            if (camForward == Vector3.zero) camForward = Vector3.forward;
-            camForward.Normalize();
+            Vector3 playerForward = this.playerController.transform.forward;
+            playerForward.y = 0f;
+            playerForward.Normalize();
+
+            this.posStart = this.rb.position;
+            this.posDestination = posStart + playerForward * this.dashDistance;
+            Quaternion dashRotation = Quaternion.LookRotation(posDestination);
+            this.elapsedTime = 0f;
+            this.isElapsed = true;
         }
-
-        Vector3 dashDirection = this.player != null ? this.player.forward : transform.forward;
-        dashDirection.y = 0f;
-
-        if (Vector3.Dot(dashDirection, camForward) < -0.1f)
+        
+        if(this.isElapsed)
         {
-            dashDirection = camForward;
-        }
-
-        if (dashDirection == Vector3.zero) dashDirection = camForward;
-        dashDirection.Normalize();
-
-        Vector3 posStart = this.rb != null ? this.rb.position : (this.player != null ? this.player.position : transform.position);
-        Vector3 posDestination = posStart + dashDirection * this.dashDistance;
-        Quaternion dashRotation = Quaternion.LookRotation(dashDirection);
-
-        if (this.playerController != null && this.playerController.Animator != null)
-        {
-            this.playerController.Animator.SetTrigger("IsRunGuard");
-        }
-
-        this.elapsedTime = 0f;
-        while (this.elapsedTime <= this.dashDuration)
-        {
-            if (this.rb != null)
-            {
-                this.rb.linearVelocity = Vector3.zero;
-                this.rb.MoveRotation(dashRotation);
-            }
-
-            float t = this.dashDuration > 0f ? (this.elapsedTime / this.dashDuration) : 1f;
-            Vector3 nextPos = Vector3.Lerp(posStart, posDestination, t);
-
-            if (this.rb != null)
-            {
-                this.rb.MovePosition(nextPos);
-            }
-            else if (this.player != null)
-            {
-                this.player.position = nextPos;
-            }
+            float t = this.elapsedTime / this.dashDuration;
+            Vector3 nextPos = Vector3.Lerp(this.posStart, this.posDestination, t);
+            this.rb.MovePosition(nextPos);
 
             this.elapsedTime += Time.fixedDeltaTime;
-            yield return new WaitForFixedUpdate();
+            if (this.elapsedTime > this.dashDuration)
+            {
+                this.isElapsed = false;
+                this.elapsedTime = 0f;
+                this.canUseSkill = false;
+                this.isPressedDash = false;
+            }
         }
-
-        if (this.rb != null)
-        {
-            this.rb.linearVelocity = Vector3.zero;
-            this.rb.MoveRotation(dashRotation);
-            this.rb.MovePosition(posDestination);
-        }
-        else if (this.player != null)
-        {
-            this.player.position = posDestination;
-        }
-
-        this.elapsedTime = 0f;
-
-        if (playerMoving != null) playerMoving.IsDashing = false;
-        if (InputSystem.Instance != null) InputSystem.Instance.IsInputFrozen = false;
-        this.canUseSkill = false;
+    }
+    public virtual void EnableIsPressDash()
+    {
+        if (!this.canUseSkill) return;
+        this.isPressedDash = true;
     }
     private void OnDrawGizmosSelected()
     {
