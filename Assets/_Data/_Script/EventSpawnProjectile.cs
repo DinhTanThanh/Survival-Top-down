@@ -36,6 +36,7 @@ public class EventSpawnProjectile : LoadMonoBehaviour
         Quaternion rotCurrent = this.transform.rotation;
         Quaternion newRot = rot * rotCurrent;
         SpawnProjectile.Instance.ExecuteSpawnPooling(this.projectilePrefab, this.pointer.position, newRot);
+        this.rangedEnemyController.RangedEnemyAttack.SetAttack(true);
     }
     public virtual void GoBackListEnemyDead()
     {

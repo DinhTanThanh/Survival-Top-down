@@ -25,9 +25,14 @@ public class RangedEnemyAttackCoolDown : CoolDown
     }
     private void Update()
     {
-        if (!this.rangedEnemyAttack.IsAttack) return;
-        if (!this.Timing()) return;
-        this.rangedEnemyAttack.SetAttack(false);
-        this.rangedEnemyController.RangedEnemyMoving.SetSpeedMovement(this.rangedEnemyController.EntitySO.baseSpeed);
+        if (this.rangedEnemyController.RangedEnemyAttack.GetAttack())
+        {
+            if (this.Timing())
+            {
+                this.rangedEnemyController.RangedEnemyAttack.SetAttack(false);
+            }
+
+        }
     }
+
 }

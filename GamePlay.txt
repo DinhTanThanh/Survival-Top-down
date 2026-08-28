@@ -1,0 +1,97 @@
+================================================================================
+                    TỔNG QUAN GAMEPLAY VÀ NỘI DUNG MÃ NGUỒN
+                    DỰ ÁN: SURVIVAL TOP-DOWN (UNITY C#)
+================================================================================
+
+1. TỔNG QUAN DỰ ÁN & KIẾN TRÚC HỆ THỐNG
+--------------------------------------------------------------------------------
+- Thể loại: Top-Down Survival / Action RPG.
+- Kiến trúc phần mềm:
+  + Modular Architecture: Các tính năng phân chia theo từng module rõ ràng (Player, Enemy, Projectile, VFX, UI Canvas, State).
+  + State Pattern (FSM - Finite State Machine): Quản lý trạng thái thông qua `IState` và `StateManager` cho cả Player và Enemy.
+  + Object Pooling (`BasePooling`): Tối ưu năng suất bộ nhớ thông qua việc tái sử dụng GameObject thay vì Instantiate/Destroy liên tục (áp dụng cho Bullet, Bomb, Projectile, Enemy Melee, Enemy Ranged, VFX).
+  + Observer Pattern (`IHealthObserver`, `IChargeObserver`): Cập nhật UI thanh máu và thanh nạp đạn (Charge) tự động khi có thay đổi dữ liệu.
+  + ScriptableObject Data Layer: Đóng gói chỉ số cấu hình (ShotData, LevelGrowthData, SkillData, DashExplosionData, EntitySO).
+
+--------------------------------------------------------------------------------
+2. CƠ CHẾ ĐIỀU KHIỂN & INPUT SYSTEM (`InputSystem.cs`, `UIJoystick.cs`)
+--------------------------------------------------------------------------------
+- Hỗ trợ đa nền tảng điều khiển (PC Keyboard + Mobile UI Touch):
+  + Di chuyển: Cụm phím WASD / Các phím mũi tên (PC) hoặc UI Joystick xoay đa hướng (Mobile UI).
+  + Tấn công cơ bản (Shoot): Phím 'J' trên bàn phím hoặc Nút bấm `ButtonAttack` trên màn hình.
+  + Kỹ năng thả bom (Bomb Skill): Phím 'K' trên bàn phím hoặc Nút bấm `ButtonBombSkill`.
+  + Kỹ năng lướt nổ (Dash Explosion Skill): Phím 'L' trên bàn phím hoặc Nút bấm `ButtonDashExplosionSkill`.
+
+--------------------------------------------------------------------------------
+3. TÍNH NĂNG VÀ CƠ CHẾ CỦA PLAYER (`PlayerController.cs`)
+--------------------------------------------------------------------------------
+a. Quản lý trạng thái di chuyển & hành động (Player FSM):
+   - `PlayerIdleState`: Trạng thái đứng yên.
+   - `PlayerMoveState`: Trạng thái di chuyển theo trục Vector2 của Input.
+   - `PlayerShotState`: Trạng thái thực hiện hành vi bắn đạn.
+
+b. Cơ chế bắn đạn & Tự động ngắm (`PlayerShooting.cs`):
+   - Đa đạn theo góc (Triple Shot / Spread Shot): Bắn cùng lúc nhiều viên đạn theo danh sách góc độ định sẵn (đọc từ `ShotData`).
+   - Tự động ngắm (Auto-Aim):
+     + Ưu tiên tìm kẻ địch gần nhất nằm trong hình nón phía trước mặt (góc 90 độ, khoảng cách `shootRange`).
+     + Nếu không có kẻ địch trong hình nón, tự động ngắm kẻ địch gần nhất bất kỳ trong phạm vi 360 độ (Enable 360 Fallback).
+     + Tự động quay nhân vật và Rigidbody về phía mục tiêu trước khi xả đạn.
+   - Cơ chế giới hạn đạn (Charge System - `BaseChargeSystem.cs`):
+     + Player có lượng đạn tối đa (Max Charge). Mỗi lần bắn sẽ tiêu tốn 1 Charge.
+     + Tự động hồi phục 1 Charge sau khoảng thời gian hồi đạn (`chargeRegenTime`).
+
+c. Cơ chế Tăng cấp & Chỉ số (`PlayerLevel.cs`):
+   - Tích lũy điểm kinh nghiệm (EXP) khi tiêu diệt kẻ địch.
+   - Khi `expCurrent` đạt mốc `expToNextLevel`, Player sẽ Level Up:
+     + Tăng HP tối đa (`healthIncreasePerLevel`) & Hồi máu tương ứng.
+     + Tăng chỉ số giáp/phòng thủ (`defenceIncreasePerLevel`).
+     + Tăng hệ số sát thương (`damageMultiplierIncreasePerLevel`).
+     + Mốc EXP yêu cầu tăng tiến theo từng cấp (+50 EXP mỗi cấp).
+
+d. Hệ thống xử lý Trúng độc (`PlayerPoisonHandler.cs`):
+   - Quản lý hiệu ứng sát thương theo thời gian (Damage over Time - DoT).
+   - Khi dính độc, Player chịu 3 lần tick sát thương (`numberTick = 3`), mỗi tick cách nhau 1 giây.
+
+--------------------------------------------------------------------------------
+4. HỆ THỐNG KỸ NĂNG (SKILLS)
+--------------------------------------------------------------------------------
+a. Kỹ năng Thả bom (`ButtonBombSkill.cs`, `SpawnBomb.cs`, `BombExplosion.cs`):
+   - Spawn viên bom nổ tại vị trí chân của Player.
+   - Bom đếm ngược sau khoảng thời gian trễ (`timeDelay`), sau đó kích hoạt Animation "Attack" nổ diện rộng (AoE) gây sát thương cho kẻ địch xung quanh.
+   - Có thời gian hồi chiêu (Cooldown) hiển thị đếm ngược trên UI (Text/Overlay).
+
+b. Kỹ năng Lướt nổ (`ButtonDashExplosionSkill.cs`):
+   - Cho phép Player lướt nhanh về phía trước một khoảng cách xác định (`dashDistance`) trong thời gian ngắn (`dashDuration`) bằng Rigidbody interpolation.
+   - Kèm theo hiệu ứng sóng nổ gây sát thương xung quanh vị trí ảnh hưởng (`explosionRadius`).
+   - Có vòng tròn chỉ báo phạm vi (Range Indicator) và hiển thị Cooldown trên UI.
+
+--------------------------------------------------------------------------------
+5. HỆ THỐNG KẺ ĐỊCH (ENEMIES & AI)
+--------------------------------------------------------------------------------
+Loại 1: Kẻ địch cận chiến (Melee Enemy - `MeleeEnemyController.cs`)
+- Trạng thái FSM: `MeleeEnemyIdleState`, `MeleeEnemyMoveState`, `MeleeEnemyAttackState`, `MeleeEnemyDeadState`.
+- Hành vi: Di chuyển áp sát Player. Khi vào tầm đánh (`attackRange`) và đạt góc đánh phù hợp (`angle <= 45f`), kích hoạt đòn đánh cận chiến.
+- Tấn công qua HitBox (`WeaponHitBox.cs`): Bật/Tắt Collider vũ khí theo Animation Event để gây sát thương chính xác cho Player.
+
+Loại 2: Kẻ địch tầm xa (Ranged Enemy - `RangedEnemyController.cs`)
+- Trạng thái FSM: `RangedEnemyIdleState`, `RangedEnemyMoveState`, `RangedEnemyAttackState`, `RangedEnemyDeadState`.
+- Hành vi: Di chuyển giữ khoảng cách với Player. Khi đạt tầm bắn, dừng lại và kích hoạt Animation bắn.
+- Bắn đạn đạn đạo (`EventSpawnProjectile.cs`): Bắn các chưởng/đạn độc (`Projectile`) qua Animation Event hướng về phía Player.
+
+--------------------------------------------------------------------------------
+6. HỆ THỐNG QUẢN LÝ QUÁI THEO WAVE (`WaveSpawnManager.cs`, `ManagerSpawnPoint.cs`)
+--------------------------------------------------------------------------------
+- Quản lý danh sách các điểm Spawn trên bản đồ (`ManagerSpawnPoint`).
+- Tiến trình Wave:
+  + Khởi tạo số lượng Melee Enemy và Ranged Enemy ngẫu nhiên cho từng đợt tại điểm spawn hiện tại.
+  + Theo dõi số lượng kẻ địch đang sống trên Scene.
+  + Khi tiêu diệt sạch kẻ địch tại điểm hiện tại (`numberMeleeEnemyOnScene <= 0` và `numberRangedEnemyOnScene <= 0`), hệ thống tự động chuyển sang vị trí SpawnPoint tiếp theo (`Reborn`) để tạo đợt quái mới.
+
+--------------------------------------------------------------------------------
+7. HỆ THỐNG TÍNH SÁT THƯƠNG & UI (`DamageSender.cs`, `DamageReceiver.cs`, `UI Canvas`)
+--------------------------------------------------------------------------------
+- Công thức tính sát thương thực nhận: `RealDamage = Max(Damage - Defence, 0)`.
+- Thanh máu & Chỉ số (Canvas Overhead):
+  + Player và mỗi Enemy đều có WorldSpace UI Bar Canvas đi kèm hiển thị HP hiện tại / HP tối đa và Level.
+  + Tự động xoay thanh máu hướng về phía Camera (`LockRotation` / `FaceCamera`) giúp người chơi dễ quan sát từ góc nhìn Top-Down.
+  + Đi kèm điểm thưởng EXP trả về cho Player khi tiêu diệt từng quái.

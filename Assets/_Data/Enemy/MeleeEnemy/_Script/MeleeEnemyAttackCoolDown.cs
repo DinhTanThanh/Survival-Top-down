@@ -21,10 +21,12 @@ public class MeleeEnemyAttackCoolDown : CoolDown
     }
     private void Update()
     {
-        if (!this.meleeEnemyController.MeleeEnemyAttack.GetIsAttack()) return;
-        if (!this.Timing()) return;
-        this.meleeEnemyController.MeleeEnemyAttack.SetIsAttack(false);
-        this.meleeEnemyController.MeleeEnemyAttack.SetHasTriggeredAttack(false);
-        this.meleeEnemyController.MeleeEnemyMoving.SetSpeedMovement(this.meleeEnemyController.EntitySO.baseSpeed);
+        if (this.meleeEnemyController.MeleeEnemyAttack.GetIsAttack())
+        {
+            if (this.Timing())
+            {
+                this.meleeEnemyController.MeleeEnemyAttack.SetIsAttack(false);
+            }
+        }
     }
 }

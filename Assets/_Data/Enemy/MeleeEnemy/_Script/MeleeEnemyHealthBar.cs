@@ -4,6 +4,11 @@ public class MeleeEnemyHealthBar : BaseSliderBar, IHealthObserver
 {
     [SerializeField] protected MeleeEnemyBarCanvas meleeEnemyBarCanvas;
     [SerializeField] protected DamageReceiver damageReceiver;
+    private void OnEnable()
+    {
+        this.damageReceiver.Reborn();
+        this.UpdateHealthHp();
+    }
     private void Start()
     {
         if (this.damageReceiver == null) return;
@@ -31,6 +36,5 @@ public class MeleeEnemyHealthBar : BaseSliderBar, IHealthObserver
     public void UpdateHealthHp()
     {
         this.slider.value = this.damageReceiver.GetHp() / this.damageReceiver.GetBaseHp();
-        Debug.Log("Update ne");
     }
 }

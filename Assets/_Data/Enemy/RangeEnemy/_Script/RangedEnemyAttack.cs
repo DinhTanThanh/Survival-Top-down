@@ -20,12 +20,13 @@ public class RangedEnemyAttack : LoadMonoBehaviour
     {
         this.isAttack = isAttack;
     }
-    private void Update()
+    public virtual bool GetAttack()
     {
-        if (Vector3.Distance(this.rangedEnemyController.Target.position, this.transform.parent.position) > 4f) return;
-        if (this.isAttack) return;
-        this.rangedEnemyController.Animator.SetTrigger("Attack");
-        this.rangedEnemyController.RangedEnemyMoving.SetSpeedMovement(0f);
-        this.isAttack = true;
+        return this.isAttack;
+    }
+    public virtual bool isReachedAttackRange()
+    {
+        if (Vector3.Distance(this.transform.parent.position, this.rangedEnemyController.Target.position) > this.rangedEnemyController.RangedEnemyMoving.AttackRange) return false;
+        return true;
     }
 }

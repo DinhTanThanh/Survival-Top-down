@@ -44,34 +44,30 @@ public class WeaponHitBox : LoadMonoBehaviour
     public virtual void DisableCollider()
     {
         this.colliderr.enabled = false;
-    }
-    public virtual void ExecuteTurnBack()
-    {
-        if (this.meleeEnemyController.MeleeEnemyAttack.GetIsAttack()) return;
-        this.meleeEnemyController.MeleeEnemyMoving.SetForcedRunning(true);
-
-        StartCoroutine(TurnBackRight());
-        this.meleeEnemyController.MeleeEnemyMoving.SetSpeedMovement(0f);
         this.meleeEnemyController.MeleeEnemyAttack.SetIsAttack(true);
-        Debug.Log("1");
     }
-    IEnumerator TurnBackRight()
-    {
-        int indexRandom = Random.Range(0, this.listDirection.Count);
-        Vector3 posDestination = this.enemyRoot.position + this.enemyRoot.rotation*this.listDirection[indexRandom] * 1.3f;
-        Vector3 posCurrent = this.enemyRoot.position;
-        float ElapsedTime = 0f;
-        float DurationTime = 1f;
-        while (ElapsedTime <= DurationTime)
-        {
-            Vector3 nextPos = Vector3.Lerp(posCurrent, posDestination, ElapsedTime / DurationTime);
-            this.meleeEnemyController.Rb.MovePosition(nextPos);
-            ElapsedTime += Time.fixedDeltaTime;
-            yield return null;
-        }
-        this.meleeEnemyController.Rb.MovePosition(posDestination);
-        this.meleeEnemyController.MeleeEnemyMoving.SetForcedRunning(false);
-    }
+    //public virtual void ExecuteTurnBack()
+    //{
+
+    //    StartCoroutine(TurnBackRight());
+    //    this.meleeEnemyController.MeleeEnemyMoving.SetSpeedMovement(0f);
+    //}
+    //IEnumerator TurnBackRight()
+    //{
+    //    int indexRandom = Random.Range(0, this.listDirection.Count);
+    //    Vector3 posDestination = this.enemyRoot.position + this.enemyRoot.rotation*this.listDirection[indexRandom] * 1.3f;
+    //    Vector3 posCurrent = this.enemyRoot.position;
+    //    float ElapsedTime = 0f;
+    //    float DurationTime = 1f;
+    //    while (ElapsedTime <= DurationTime)
+    //    {
+    //        Vector3 nextPos = Vector3.Lerp(posCurrent, posDestination, ElapsedTime / DurationTime);
+    //        this.meleeEnemyController.Rb.MovePosition(nextPos);
+    //        ElapsedTime += Time.fixedDeltaTime;
+    //        yield return null;
+    //    }
+    //    this.meleeEnemyController.Rb.MovePosition(posDestination);
+    //}
     protected virtual void GoBackListEnemyDead()
     {
         this.transform.parent.gameObject.SetActive(false);

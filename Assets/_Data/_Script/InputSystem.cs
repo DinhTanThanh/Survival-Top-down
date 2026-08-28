@@ -6,17 +6,12 @@ public class InputSystem : MonoBehaviour
     private static InputSystem instance;
     [SerializeField] protected float horizontal;
     [SerializeField] protected float vertical;
-    [SerializeField] protected bool isInputFrozen;
+    [SerializeField] protected bool isAttack;
     [SerializeField] protected InputAction moveAction;
     [SerializeField] protected UIJoystick uiJoystick;
 
     public static InputSystem Instance => instance;
-    public bool IsInputFrozen
-    {
-        get => isInputFrozen;
-        set => isInputFrozen = value;
-    }
-
+    public UIJoystick UIJoystick => uiJoystick;
     private void Awake()
     {
         InputSystem.instance = this;
@@ -69,14 +64,11 @@ public class InputSystem : MonoBehaviour
 
     private void Update()
     {
-        if (this.isInputFrozen)
-        {
-            this.horizontal = 0f;
-            this.vertical = 0f;
-            return;
-        }
-
         Vector2 moveInput = Vector2.zero;
+        if (Keyboard.current != null && Keyboard.current.jKey.wasPressedThisFrame)
+        {
+            this.isAttack = true;
+        }
 
         if (this.moveAction != null && this.moveAction.enabled)
         {
@@ -92,7 +84,14 @@ public class InputSystem : MonoBehaviour
         this.horizontal = moveInput.x;
         this.vertical = moveInput.y;
     }
-
+    public virtual bool GetIsAttack()
+    {
+        return this.isAttack;
+    }
+    public virtual void SetIsAttack(bool isAttack)
+    {
+        this.isAttack = isAttack;
+    }
     public virtual float GetHorizontal()
     {
         return this.horizontal;

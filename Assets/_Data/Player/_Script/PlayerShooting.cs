@@ -29,6 +29,7 @@ public class PlayerShooting : LoadMonoBehaviour
     }
     public BaseChargeSystem BaseChargeSystem => baseChargeSystem;
     public PlayerController PlayerController => playerController;
+    public bool CanFire => canFire && currentCharge > 0;
     protected override void LoadComponent()
     {
         base.LoadComponent();
@@ -57,21 +58,17 @@ public class PlayerShooting : LoadMonoBehaviour
     }
     private void Update()
     {
-        if (this.canFire)
+        if (!this.canFire)
         {
-            if (this.currentCharge <= 0) return;
-            if (!this.playerController.ButtonAttack.IsAttack) return;
-            this.AutoAimNearestEnemy();
-            this.playerController.Animator.SetTrigger("Shoot");
-            this.currentCharge--;
-            this.OnChangeChargeUI();
-            this.canFire = false;
+            if (this.Timing())
+            {
+                this.canFire = true;
+            }
         }
-        if (!this.Timing()) return;
-        this.canFire = true;
     }
-    protected virtual void Shooting()
+    public virtual void Shooting()
     {
+        if (!this.canFire || this.currentCharge <= 0) return;
         this.AutoAimNearestEnemy();
         Quaternion rotCurrent = this.playerController.transform.rotation;
         for(int i = 0; i < this.bulletPerShot; i++)
@@ -80,12 +77,15 @@ public class PlayerShooting : LoadMonoBehaviour
             Quaternion rot = newRotation * rotCurrent;
             SpawnBullet.Instance.ExecuteSpawnPooling(this.bulletPrefab, this.firePoint.position, rot);
         }
+        this.currentCharge--;
+        this.OnChangeChargeUI();
+        this.canFire = false;
+        this.timer = 0f;
     }
     protected virtual void AutoAimNearestEnemy()
     {
         if (this.playerController == null) return;
         PlayerMoving playerMoving = this.playerController.GetComponentInChildren<PlayerMoving>();
-        if (playerMoving != null && playerMoving.IsDashing) return;
 
         Vector3 playerPos = this.playerController.transform.position;
         Vector3 playerForward = this.playerController.transform.forward;
@@ -142,7 +142,7 @@ public class PlayerShooting : LoadMonoBehaviour
     protected virtual void LoadBaseChargeSystem()
     {
         if (this.baseChargeSystem != null) return;
-        ;this.baseChargeSystem = GetComponentInChildren<BaseChargeSystem>();
+        ;this.baseChargeSystem = FindFirstObjectByType<BaseChargeSystem>();
         Debug.LogWarning(transform.name + " : LoadBaseChargeSystem");
     }
     protected virtual void LoadPlayerController()
@@ -150,6 +150,10 @@ public class PlayerShooting : LoadMonoBehaviour
         if (this.playerController != null) return;
         this.playerController = GetComponentInParent<PlayerController>();
         Debug.LogWarning(transform.name + " : LoadPlayerController");
+    }
+    public virtual bool GetCanFire()
+    {
+        return this.canFire;
     }
     public virtual int GetCurrentCharge()
     {

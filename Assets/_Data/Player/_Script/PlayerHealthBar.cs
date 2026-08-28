@@ -4,6 +4,10 @@ public class PlayerHealthBar : BaseSliderBar,IHealthObserver
 {
     [SerializeField] protected PlayerBarCanvas playerBarCanvas;
     [SerializeField] protected DamageReceiver playerDamageReceiver;
+    private void OnEnable()
+    {
+        this.UpdateHealthHp();
+    }
     private void Start()
     {
         if (this.playerDamageReceiver == null) return;
@@ -31,6 +35,5 @@ public class PlayerHealthBar : BaseSliderBar,IHealthObserver
     public void UpdateHealthHp()
     {
         this.slider.value = this.playerDamageReceiver.GetHp() / this.playerDamageReceiver.GetBaseHp();
-        Debug.Log("Update ne");
     }
 }

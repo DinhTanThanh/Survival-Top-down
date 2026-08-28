@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddd7df0009fe0a743bf00a25d115c7f9, type: 3}
   m_Name: RangedEnemySO
   m_EditorClassIdentifier: 
-  baseHp: 180
-  baseSpeed: 2.7
-  baseRotation: 0
+  baseHp: 80
+  baseSpeed: 2.5
+  baseRotation: 180
   baseDefence: 0
   baseDamage: 0
   damageMultiplier: 0
