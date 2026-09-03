@@ -26,6 +26,10 @@ public class PlayerShotState : IState
         bool hasInput = InputSystem.Instance.GetHorizontal() != 0f || InputSystem.Instance.GetVertical() != 0f;
         if (hasInput)
         {
+            if (_controller.PlayerMoving != null)
+            {
+                _controller.PlayerMoving.Moving();
+            }
             _controller.PlayerStateManager.ChangeState(_controller.MoveState);
         }
         else

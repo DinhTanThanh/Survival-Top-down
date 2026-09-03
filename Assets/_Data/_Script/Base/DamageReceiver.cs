@@ -7,6 +7,7 @@ public class DamageReceiver : LoadMonoBehaviour
     [SerializeField] protected float baseHp;
     [SerializeField] protected float hp;
     [SerializeField] protected float damageMultiplier;
+    [SerializeField] protected bool isTakeDamage;
     [SerializeField] protected bool isDead;
     [SerializeField] protected float expReward;
     [SerializeField] protected BaseEntityController baseEntityController;
@@ -86,21 +87,38 @@ public class DamageReceiver : LoadMonoBehaviour
     {
         this.defence = defence;
     }
-    
+    public virtual void SetIsTakeDamage(bool isTakeDamage)
+    {
+        this.isTakeDamage = isTakeDamage;
+    }
+    public virtual bool GetIsTakeDamage()
+    {
+        return this.isTakeDamage;
+    }
+
     public virtual void AddBaseHealth(float health)
     {
         if (this.isDead) return;
-        this.baseHp+= health;
+        this.baseHp += health;
     }
     public virtual void AddHealth(float health)
     {
         if (this.isDead) return;
-        this.hp += health;
+        float newHP = this.hp+health;
+        if (newHP >= this.baseHp)
+        {
+            this.hp = this.baseHp;
+        }
+        else
+        {
+            this.hp += health;
+        }
+        this.OnChangeUI();
     }
     public virtual void AddDefence(int defence)
     {
         if (this.isDead) return;
-        this.defence+= defence;
+        this.defence += defence;
     }
     public virtual void AddDamageMultiplier(float damageMultiplier)
     {

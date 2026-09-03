@@ -7,18 +7,12 @@ public class WeaponHitBox : LoadMonoBehaviour
     [SerializeField] protected Collider colliderr;
     [SerializeField] protected Transform enemyRoot;
     [SerializeField] protected MeleeEnemyController meleeEnemyController;
-    [SerializeField] protected List<Vector3> listDirection = new List<Vector3>();
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadCollider();
         this.LoadMeleeEnemyController();
         this.SetEnemyRoot(this.meleeEnemyController.transform);
-        this.SetListDirection(new List<Vector3>() { Vector3.right, Vector3.left });
-    }
-    protected virtual void SetListDirection(List<Vector3> listDirection)
-    {
-        this.listDirection = listDirection;
     }
     protected virtual void SetEnemyRoot(Transform enemyRoot)
     {
@@ -46,28 +40,6 @@ public class WeaponHitBox : LoadMonoBehaviour
         this.colliderr.enabled = false;
         this.meleeEnemyController.MeleeEnemyAttack.SetIsAttack(true);
     }
-    //public virtual void ExecuteTurnBack()
-    //{
-
-    //    StartCoroutine(TurnBackRight());
-    //    this.meleeEnemyController.MeleeEnemyMoving.SetSpeedMovement(0f);
-    //}
-    //IEnumerator TurnBackRight()
-    //{
-    //    int indexRandom = Random.Range(0, this.listDirection.Count);
-    //    Vector3 posDestination = this.enemyRoot.position + this.enemyRoot.rotation*this.listDirection[indexRandom] * 1.3f;
-    //    Vector3 posCurrent = this.enemyRoot.position;
-    //    float ElapsedTime = 0f;
-    //    float DurationTime = 1f;
-    //    while (ElapsedTime <= DurationTime)
-    //    {
-    //        Vector3 nextPos = Vector3.Lerp(posCurrent, posDestination, ElapsedTime / DurationTime);
-    //        this.meleeEnemyController.Rb.MovePosition(nextPos);
-    //        ElapsedTime += Time.fixedDeltaTime;
-    //        yield return null;
-    //    }
-    //    this.meleeEnemyController.Rb.MovePosition(posDestination);
-    //}
     protected virtual void GoBackListEnemyDead()
     {
         this.transform.parent.gameObject.SetActive(false);

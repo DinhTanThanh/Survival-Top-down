@@ -3,6 +3,10 @@ using UnityEngine;
 public class VFX_SphereVioDisableByTime : BaseDisableByTime
 {
     [SerializeField] protected VFX_SphereVioController controller;
+    private void OnEnable()
+    {
+        this.SetTimer(0f);
+    }
     protected override void LoadComponent()
     {
         base.LoadComponent();

@@ -53,6 +53,8 @@ public class PlayerPoisonHandler : LoadMonoBehaviour
         if (this.numberTick <= 0)
         {
             this.SetIsRefresh(false);
+            ParticleSystem particle = this.playerController.Indicator.GetParticleByName("DarkPoison");
+            particle.Stop();
             return;
         }
         if (!this.Timing()) return;
@@ -61,6 +63,8 @@ public class PlayerPoisonHandler : LoadMonoBehaviour
     }
     public virtual void Refresh()
     {
+        ParticleSystem particle = this.playerController.Indicator.GetParticleByName("DarkPoison");
+        particle.Play();
         this.SetIsRefresh(true);
         this.SetNumebrTick(3);
         this.SetTimer(0);

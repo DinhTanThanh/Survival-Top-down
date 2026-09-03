@@ -69,12 +69,29 @@ public class PlayerShooting : LoadMonoBehaviour
     public virtual void Shooting()
     {
         if (!this.canFire || this.currentCharge <= 0) return;
-        this.AutoAimNearestEnemy();
-        Quaternion rotCurrent = this.playerController.transform.rotation;
-        for(int i = 0; i < this.bulletPerShot; i++)
+        Transform targetEnemy = this.GetTargetEnemy();
+        Quaternion shootRotation = this.playerController.transform.rotation;
+
+        if (targetEnemy != null)
         {
-            Quaternion newRotation = Quaternion.Euler(0f, this.bulletAngles[i],0f);
-            Quaternion rot = newRotation * rotCurrent;
+            Vector3 targetDir = targetEnemy.position - this.playerController.transform.position;
+            targetDir.y = 0f;
+            if (targetDir.sqrMagnitude > 0.001f)
+            {
+                shootRotation = Quaternion.LookRotation(targetDir);
+                this.playerController.transform.rotation = shootRotation;
+                Rigidbody rb = this.playerController.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.rotation = shootRotation;
+                }
+            }
+        }
+
+        for (int i = 0; i < this.bulletPerShot; i++)
+        {
+            Quaternion newRotation = Quaternion.Euler(0f, this.bulletAngles[i], 0f);
+            Quaternion rot = newRotation * shootRotation;
             SpawnBullet.Instance.ExecuteSpawnPooling(this.bulletPrefab, this.firePoint.position, rot);
         }
         this.currentCharge--;
@@ -82,62 +99,47 @@ public class PlayerShooting : LoadMonoBehaviour
         this.canFire = false;
         this.timer = 0f;
     }
-    protected virtual void AutoAimNearestEnemy()
+
+    protected virtual Transform GetTargetEnemy()
     {
-        if (this.playerController == null) return;
-        PlayerMoving playerMoving = this.playerController.GetComponentInChildren<PlayerMoving>();
+        if (this.playerController == null) return null;
 
         Vector3 playerPos = this.playerController.transform.position;
         Vector3 playerForward = this.playerController.transform.forward;
         playerForward.y = 0f;
         if (playerForward == Vector3.zero) playerForward = Vector3.forward;
         playerForward.Normalize();
+
         Collider[] hitColliders = Physics.OverlapSphere(playerPos, this.shootRange, this.enemyLayerMask);
-        Transform nearestInCone = null;
-        float minDist = float.MaxValue;
-        Transform nearestAnywhere = null;
-        float minDistAnywhere = float.MaxValue;
+        Transform bestTarget = null;
+        float bestScore = float.MaxValue;
+
         foreach (Collider collider in hitColliders)
         {
+            if (collider == null) continue;
             DamageReceiver damageReceiver = collider.transform.parent?.GetComponentInChildren<DamageReceiver>();
-            if (damageReceiver == null || damageReceiver is PlayerDamageReceiver) continue;
+            if (damageReceiver == null)
+            {
+                damageReceiver = collider.GetComponentInParent<DamageReceiver>();
+            }
+            if (damageReceiver == null || damageReceiver is PlayerDamageReceiver || damageReceiver.GetIsDead()) continue;
+
             Vector3 enemyPos = damageReceiver.transform.position;
             Vector3 dirToEnemy = enemyPos - playerPos;
             dirToEnemy.y = 0f;
-            if (dirToEnemy == Vector3.zero) continue;
-            float distanceSqr = dirToEnemy.sqrMagnitude;
-            if (distanceSqr < minDistAnywhere)
-            {
-                minDistAnywhere = distanceSqr;
-                nearestAnywhere = damageReceiver.transform;
-            }
-            float angle = Vector3.Angle(playerForward, dirToEnemy.normalized);
-            if (angle <= this.aimAngle / 2f)
-            {
-                if (distanceSqr < minDist)
-                {
-                    minDist = distanceSqr;
-                    nearestInCone = damageReceiver.transform;
-                }
-            }
-        }
-        Transform targetEnemy = nearestInCone != null ? nearestInCone : (this.enable360Fallback ? nearestAnywhere : null);
-        if (targetEnemy != null)
-        {
-            Vector3 targetDir = targetEnemy.position - playerPos;
-            targetDir.y = 0f;
-            if (targetDir != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(targetDir);
-                this.playerController.transform.rotation = targetRotation;
+            float distance = dirToEnemy.magnitude;
+            if (distance <= 0.001f || distance > this.shootRange) continue;
 
-                Rigidbody rb = this.playerController.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    rb.rotation = targetRotation;
-                }
+            float angle = Vector3.Angle(playerForward, dirToEnemy.normalized);
+            float score = distance + (angle / 180f) * 2f;
+            if (score < bestScore)
+            {
+                bestScore = score;
+                bestTarget = damageReceiver.transform;
             }
         }
+
+        return bestTarget;
     }
     protected virtual void LoadBaseChargeSystem()
     {

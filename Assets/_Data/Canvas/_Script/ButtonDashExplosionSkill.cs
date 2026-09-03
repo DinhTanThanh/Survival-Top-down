@@ -14,12 +14,14 @@ public class ButtonDashExplosionSkill : BaseButton
     [SerializeField] protected bool canUseSkill;
     [SerializeField] protected bool isElapsed;
     [SerializeField] protected bool isPressedDash;
+    [SerializeField] protected bool isDash;
     [SerializeField] protected Transform player;
     [SerializeField] protected GameObject rangeIndicator;
     [SerializeField] protected Rigidbody rb;
     [SerializeField] protected TextMeshProUGUI textMeshProUGUI;
     [SerializeField] protected DashExplosionData dashExplosionData;
     [SerializeField] protected PlayerController playerController;
+    [SerializeField] protected PlayerEventAnimation playerEventAnimation;
     protected Vector3 posStart;
     protected Vector3 posDestination;
     public SkillData SkillData => dashExplosionData;
@@ -32,11 +34,147 @@ public class ButtonDashExplosionSkill : BaseButton
         this.LoadPlayer();
         this.LoadTextMeshProUGUI();
         this.LoadPlayerController();
+        this.LoadPlayerEventAnimation();
         this.LoadRigidbody();
         this.SetExplosionRadius(this.dashExplosionData.ExplosionRadius);
         this.SetDashDistance(this.dashExplosionData.DashDistance);
         this.SetDashDuration(this.dashExplosionData.DashDuration);
         this.SetCoolDown(this.dashExplosionData.CoolDown);
+    }
+    protected virtual void LoadPlayerEventAnimation()
+    {
+        if (this.playerEventAnimation != null) return;
+        this.playerEventAnimation = FindFirstObjectByType<PlayerEventAnimation>();
+        Debug.LogWarning(transform.name + " : LoadPlayerEventAnimation");
+    }
+    private void Update()
+    {
+        if(Keyboard.current!=null && Keyboard.current.lKey.isPressed)
+        {
+            this.EnableIsPressDash();
+        }
+        if (this.canUseSkill) return;
+        if (!this.Timing())
+        {
+            this.textMeshProUGUI.text = (this.coolDown - this.timer).ToString("F1");
+            return;
+        }
+        this.textMeshProUGUI.text = "";
+        this.canUseSkill = true;
+    }
+    private void FixedUpdate()
+    {
+        if (this.isPressedDash)
+        {
+            this.ExecuteDashExplosionSkill();
+        }
+    }
+    protected void ExecuteDashExplosionSkill()
+    {
+        if (!this.isElapsed)
+        {
+            Vector3 dashDirection = this.playerController != null ? this.playerController.transform.forward : Vector3.forward;
+            float h = InputSystem.Instance != null ? InputSystem.Instance.GetHorizontal() : 0f;
+            float v = InputSystem.Instance != null ? InputSystem.Instance.GetVertical() : 0f;
+            Camera mainCam = Camera.main;
+            if (h != 0f || v != 0f)
+            {
+                Vector3 camForward = mainCam != null ? mainCam.transform.forward : Vector3.forward;
+                Vector3 camRight = mainCam != null ? mainCam.transform.right : Vector3.right;
+                camForward.y = 0f;
+                camRight.y = 0f;
+                Vector3 inputDir = (camForward.normalized * v) + (camRight.normalized * h);
+                if (inputDir.sqrMagnitude > 0.001f)
+                {
+                    dashDirection = inputDir.normalized;
+                }
+            }
+            dashDirection.y = 0f;
+            if (dashDirection == Vector3.zero) dashDirection = Vector3.forward;
+
+            Quaternion dashRotation = Quaternion.LookRotation(dashDirection);
+            if (this.rb != null)
+            {
+                this.rb.rotation = dashRotation;
+            }
+            if (this.playerController != null)
+            {
+                this.playerController.transform.rotation = dashRotation;
+            }
+
+            this.posStart = this.rb != null ? this.rb.position : (this.player != null ? this.player.position : Vector3.zero);
+            this.posDestination = this.posStart + dashDirection * this.dashDistance;
+            this.elapsedTime = 0f;
+            this.isElapsed = true;
+        }
+
+        if (this.isElapsed)
+        {
+            float t = this.elapsedTime / this.dashDuration;
+            t = Mathf.Clamp01(t);
+            Vector3 nextPos = Vector3.Lerp(this.posStart, this.posDestination, t);
+            if (this.rb != null)
+            {
+                this.rb.MovePosition(nextPos);
+            }
+
+            this.elapsedTime += Time.fixedDeltaTime;
+            if (this.elapsedTime >= this.dashDuration)
+            {
+                if (this.rb != null)
+                {
+                    this.rb.MovePosition(this.posDestination);
+                }
+                if (this.playerEventAnimation != null)
+                {
+                    this.playerEventAnimation.Explosion();
+                }
+                this.isElapsed = false;
+                this.elapsedTime = 0f;
+                this.canUseSkill = false;
+                this.isPressedDash = false;
+                this.isDash = false;
+            }
+        }
+    }
+    public virtual void EnableIsPressDash()
+    {
+        if (!this.canUseSkill || this.isDash) return;
+        this.isPressedDash = true;
+        this.isDash = true;
+
+        if (this.playerController != null)
+        {
+            if (this.playerController.Animator != null)
+            {
+                this.playerController.Animator.SetTrigger("IsRunGuard");
+                this.playerController.Animator.SetBool("IsRunning", true);
+            }
+            if (this.playerController.PlayerStateManager != null)
+            {
+                this.playerController.PlayerStateManager.ChangeState(this.playerController.MoveState);
+            }
+        }
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(this.player.position, this.explosionRedius);
+    }
+    public virtual void EnableRangeIndicator()
+    {
+        this.rangeIndicator.SetActive(true);
+    }
+    public virtual void DisableRangeIndicator()
+    {
+        this.rangeIndicator.SetActive(false);
+    }
+    protected virtual bool Timing()
+    {
+        this.timer += Time.deltaTime;
+        if (this.timer < this.coolDown) return false;
+        this.timer = 0;
+        return true;
     }
     protected virtual void SetExplosionRadius(float explosionRadius)
     {
@@ -57,6 +195,10 @@ public class ButtonDashExplosionSkill : BaseButton
     protected virtual void SetCanUseSkill(bool canUseSkill)
     {
         this.canUseSkill = canUseSkill;
+    }
+    public virtual bool GetIsDash()
+    {
+        return this.isDash;
     }
     protected virtual void LoadRigidbody()
     {
@@ -94,84 +236,5 @@ public class ButtonDashExplosionSkill : BaseButton
         if (this.playerController != null) return;
         this.playerController = FindFirstObjectByType<PlayerController>();
         Debug.LogWarning(transform.name + " : LoadPlayerController");
-    }
-    private void Update()
-    {
-        if(Keyboard.current!=null && Keyboard.current.lKey.isPressed)
-        {
-            this.EnableIsPressDash();
-        }
-
-        if (this.canUseSkill) return;
-        if (!this.Timing())
-        {
-            this.textMeshProUGUI.text = (this.coolDown - this.timer).ToString("F1");
-            return;
-        }
-        this.textMeshProUGUI.text = "";
-        this.canUseSkill = true;
-    }
-    private void FixedUpdate()
-    {
-        if (this.isPressedDash)
-        {
-            this.ExecuteDashExplosionSkill();
-        }
-    }
-    protected void  ExecuteDashExplosionSkill()
-    {
-        if (!this.isElapsed)
-        {
-            Vector3 playerForward = this.playerController.transform.forward;
-            playerForward.y = 0f;
-            playerForward.Normalize();
-
-            this.posStart = this.rb.position;
-            this.posDestination = posStart + playerForward * this.dashDistance;
-            Quaternion dashRotation = Quaternion.LookRotation(posDestination);
-            this.elapsedTime = 0f;
-            this.isElapsed = true;
-        }
-        
-        if(this.isElapsed)
-        {
-            float t = this.elapsedTime / this.dashDuration;
-            Vector3 nextPos = Vector3.Lerp(this.posStart, this.posDestination, t);
-            this.rb.MovePosition(nextPos);
-
-            this.elapsedTime += Time.fixedDeltaTime;
-            if (this.elapsedTime > this.dashDuration)
-            {
-                this.isElapsed = false;
-                this.elapsedTime = 0f;
-                this.canUseSkill = false;
-                this.isPressedDash = false;
-            }
-        }
-    }
-    public virtual void EnableIsPressDash()
-    {
-        if (!this.canUseSkill) return;
-        this.isPressedDash = true;
-    }
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(this.player.position, this.explosionRedius);
-    }
-    public virtual void EnableRangeIndicator()
-    {
-        this.rangeIndicator.SetActive(true);
-    }
-    public virtual void DisableRangeIndicator()
-    {
-        this.rangeIndicator.SetActive(false);
-    }
-    protected virtual bool Timing()
-    {
-        this.timer += Time.deltaTime;
-        if (this.timer < this.coolDown) return false;
-        this.timer = 0;
-        return true;
     }
 }
