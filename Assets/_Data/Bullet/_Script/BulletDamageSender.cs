@@ -6,7 +6,7 @@ public class BulletDamageSender : DamageSender
     {
         base.LoadComponent();
         this.LoadBulletController();
-        this.SetBaseDamage(this.bulletController.WeaponData.baseDamage);
+        this.SetBaseDamage(0);//this.bulletController.WeaponData.baseDamage);
         this.SetDamageMultiplier(this.bulletController.WeaponData.damageMultiplier);
     }
     protected virtual void LoadBulletController()
@@ -19,6 +19,7 @@ public class BulletDamageSender : DamageSender
     {
         DamageReceiver damageReceiver=other.transform.parent?.GetComponentInChildren<DamageReceiver>();
         if (damageReceiver == null || damageReceiver is PlayerDamageReceiver) return;
+        damageReceiver.SetIsTakeDamage(true);
         Vector3 posSpawn = this.transform.position;
         posSpawn.y = 0f;
         SpawnVFX_SphereVio.Instance.ExecuteSpawnPooling(this.bulletController.VFX_SphereVio,posSpawn,Quaternion.identity);

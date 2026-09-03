@@ -4,6 +4,10 @@ public class BaseDisableByTime : LoadMonoBehaviour
 {
     [SerializeField] protected float timer;
     [SerializeField] protected float delayTime;
+    protected virtual void SetTimer(float timer)
+    {
+        this.timer = timer;
+    }
     protected virtual void SetDelayTime(float delayTime)
     {
         this.delayTime = delayTime;

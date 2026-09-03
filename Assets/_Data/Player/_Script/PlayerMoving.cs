@@ -59,12 +59,15 @@ public class PlayerMoving : LoadMonoBehaviour
         {
             movementPosition.Normalize();
         }
-        Quaternion targetRotation = Quaternion.LookRotation(movementPosition);
-        Quaternion newRotation = Quaternion.RotateTowards(this.rb.rotation, targetRotation, this.speedRotation * Time.fixedDeltaTime);
-        this.rb.MoveRotation(newRotation);
 
-        Vector3 moveDirection = this.rb.rotation * Vector3.forward;
-        Vector3 moveDelta = moveDirection * (movementPosition.magnitude * this.speedMovement * Time.fixedDeltaTime);
+        if (movementPosition.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(movementPosition);
+            Quaternion newRotation = Quaternion.RotateTowards(this.rb.rotation, targetRotation, this.speedRotation * Time.fixedDeltaTime);
+            this.rb.MoveRotation(newRotation);
+        }
+
+        Vector3 moveDelta = movementPosition * (this.speedMovement * Time.fixedDeltaTime);
         this.rb.MovePosition(this.rb.position + moveDelta);
     }
     protected virtual void SetSpeedMovement(float speedMovement)

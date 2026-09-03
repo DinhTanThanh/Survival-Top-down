@@ -3,8 +3,9 @@ using UnityEngine;
 [RequireComponent(typeof(StateManager))]
 public class PlayerController : BaseEntityController
 {
-    [SerializeField] protected GameObject bullet;
     [SerializeField] protected Transform firePoint;
+    [SerializeField] protected GameObject bullet;
+    [SerializeField] protected Indicator indicator;
     [SerializeField] protected StateManager playerStateManager;
     [SerializeField] protected ShotData shotData;
     [SerializeField] protected LevelGrowthData levelGrowthData;
@@ -13,12 +14,14 @@ public class PlayerController : BaseEntityController
     [SerializeField] protected PlayerLevel playerLevel;
     [SerializeField] protected PlayerShooting playerShooting;
     [SerializeField] protected PlayerMoving playerMoving;
+    [SerializeField] protected ButtonDashExplosionSkill dashExplosionSkill;
     protected PlayerIdleState idleState;
     protected PlayerMoveState moveState;
     protected PlayerShotState shotState;
 
-    public GameObject Bullet => bullet;
     public Transform FirePoint => firePoint;
+    public GameObject Bullet => bullet;
+    public Indicator Indicator => indicator;
     public StateManager PlayerStateManager => playerStateManager;
     public ShotData ShotData => shotData;
     public LevelGrowthData LevelGrowthData => levelGrowthData;
@@ -30,7 +33,7 @@ public class PlayerController : BaseEntityController
     public PlayerIdleState IdleState => idleState;
     public PlayerMoveState MoveState => moveState;
     public PlayerShotState ShotState => shotState;
-
+    public ButtonDashExplosionSkill DashExplosionSkill => dashExplosionSkill;
     protected virtual void Start()
     {
         this.InitStates();
@@ -61,6 +64,8 @@ public class PlayerController : BaseEntityController
         this.LoadPlayerLevel();
         this.LoadPlayerShooting();
         this.LoadPlayerMoving();
+        this.LoadDashExplosionSkill();
+        this.LoadIndicator();
     }
     protected virtual void LoadLevelSO()
     {
@@ -121,6 +126,18 @@ public class PlayerController : BaseEntityController
         if (this.playerShooting != null) return;
         this.playerShooting = GetComponentInChildren<PlayerShooting>();
         Debug.LogWarning(transform.name + " : LoadPlayerShooting");
+    }
+    protected virtual void LoadDashExplosionSkill()
+    {
+        if (this.dashExplosionSkill != null) return;
+        this.dashExplosionSkill=FindFirstObjectByType<ButtonDashExplosionSkill>();
+        Debug.LogWarning(transform.name + " : LoadDashExplosionSkill");
+    }
+    protected virtual void LoadIndicator()
+    {
+        if(this.indicator != null) return;
+        this.indicator = GetComponentInChildren<Indicator>();
+        Debug.LogWarning(transform.name + " : LoadIndicator");
     }
 }
 

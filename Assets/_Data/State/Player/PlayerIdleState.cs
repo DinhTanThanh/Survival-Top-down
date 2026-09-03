@@ -22,13 +22,21 @@ public class PlayerIdleState : IState
     {
         if (InputSystem.Instance == null || _controller == null || _controller.PlayerStateManager == null) return;
 
-        if (InputSystem.Instance.GetHorizontal() != 0f || InputSystem.Instance.GetVertical() != 0f)
+        if (_controller.DashExplosionSkill != null && _controller.DashExplosionSkill.GetIsDash())
         {
             _controller.PlayerStateManager.ChangeState(_controller.MoveState);
+            return;
+        }
+
+        if (InputSystem.Instance.GetHorizontal() != 0f || InputSystem.Instance.GetVertical() != 0f )
+        {
+            _controller.PlayerStateManager.ChangeState(_controller.MoveState);
+            return;
         }
         if (InputSystem.Instance.GetIsAttack() && _controller.PlayerShooting != null && _controller.PlayerShooting.CanFire)
         {
             _controller.PlayerStateManager.ChangeState(_controller.ShotState);
+            return;
         }
     }
 

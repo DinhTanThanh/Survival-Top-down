@@ -82,7 +82,8 @@ public class ButtonBombSkill : BaseButton
     {
         if (!this.canUseSkill) return;
         Vector3 pos = this.player.position;
-        pos.y = 0.7f;
+        pos.y = 0f;
+        pos += new Vector3(0, 0, -0.5f);
         SpawnBomb.Instance.ExecuteSpawnPooling(this.bombPrefab, pos, Quaternion.identity);
         this.canUseSkill = false;
     }

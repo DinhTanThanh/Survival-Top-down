@@ -20,7 +20,7 @@ public class MeleeEnemyDamageSender : DamageSender
     protected virtual void LoadMeleeEnemyController()
     {
         if (this.meleeEnemyController != null) return;
-        this.meleeEnemyController = GetComponentInParent<MeleeEnemyController>();
+        this.meleeEnemyController = GetComponent<MeleeEnemyController>();
         Debug.LogWarning(transform.name + " : LoadMeleeEnemyController");
     }
 }

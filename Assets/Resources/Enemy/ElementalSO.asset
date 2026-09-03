@@ -12,14 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e4491aa45a12e42a336ee9467776b2, type: 3}
   m_Name: ElementalSO
   m_EditorClassIdentifier: 
-  baseHp: 0
-  baseSpeed: 2
-  baseRotation: 0
-  baseDefence: 0
-  baseDamage: 0
-  damageMultiplier: 0
-  attackRange: 0
-  expReward: 0
-  minximumDistance: 4
+  minximumDistance: 2
   maximumDistance: 6
-  strafeMovement: 2
+  strafeMovement: 4

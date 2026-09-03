@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerEventAnimation : LoadMonoBehaviour
 {
+    [SerializeField] protected float lastExplosionTime = -1f;
     [SerializeField] protected float baseDamage;
     [SerializeField] protected float explosionRedius;
     [SerializeField] protected Transform player;
@@ -51,16 +52,37 @@ public class PlayerEventAnimation : LoadMonoBehaviour
         this.dashExplosionData = Resources.Load<DashExplosionData>("WeaponData/DashExplosionData");
         Debug.LogWarning(transform.name + " : LoadDashExplosionData");
     }
-    protected virtual void Explosion()
+
+    public virtual void Explosion()
     {
-        this.explosion_light.transform.position = this.player.position;
-        this.particlesystem.Play();
-        Collider[] hitEnemies = Physics.OverlapSphere(this.player.position, this.explosionRedius);
+        if (Time.time - this.lastExplosionTime < 0.2f) return;
+        this.lastExplosionTime = Time.time;
+
+        if (this.explosion_light != null)
+        {
+            this.explosion_light.transform.position = this.player.position;
+            if (this.particlesystem != null)
+            {
+                this.particlesystem.Play();
+            }
+        }
+        Vector3 center = this.player != null ? this.player.position : transform.position;
+        Collider[] hitEnemies = Physics.OverlapSphere(center, this.explosionRedius);
+        System.Collections.Generic.HashSet<DamageReceiver> damagedReceivers = new System.Collections.Generic.HashSet<DamageReceiver>();
         foreach (Collider collider in hitEnemies)
         {
+            if (collider == null) continue;
             DamageReceiver dameReceiver = collider.transform.parent?.GetComponentInChildren<DamageReceiver>();
-            if (dameReceiver == null ||dameReceiver is PlayerDamageReceiver) continue;
-            dameReceiver.ReduceHp(this.baseDamage);
+            if (dameReceiver == null)
+            {
+                dameReceiver = collider.GetComponentInParent<DamageReceiver>();
+            }
+            if (dameReceiver == null || dameReceiver is PlayerDamageReceiver) continue;
+            if (damagedReceivers.Add(dameReceiver))
+            {
+                dameReceiver.SetIsTakeDamage(true);
+                dameReceiver.ReduceHp(this.baseDamage);
+            }
         }
     }
 }
