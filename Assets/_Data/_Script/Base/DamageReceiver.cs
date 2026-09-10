@@ -12,6 +12,10 @@ public class DamageReceiver : LoadMonoBehaviour
     [SerializeField] protected float expReward;
     [SerializeField] protected BaseEntityController baseEntityController;
     [SerializeField] protected List<IHealthObserver> listHealthObserver = new List<IHealthObserver>();
+    protected virtual void OnEnable()
+    {
+        this.Reborn();
+    }
     protected override void LoadComponent()
     {
         base.LoadComponent();
@@ -42,13 +46,22 @@ public class DamageReceiver : LoadMonoBehaviour
     }
     public virtual void AddHealthObserver(IHealthObserver healthObserver)
     {
-        this.listHealthObserver.Add(healthObserver);
+        if (healthObserver == null) return;
+        if (!this.listHealthObserver.Contains(healthObserver))
+        {
+            this.listHealthObserver.Add(healthObserver);
+        }
     }
     protected virtual void OnChangeUI()
     {
-        foreach (IHealthObserver healthObserver in this.listHealthObserver)
+        for (int i = this.listHealthObserver.Count - 1; i >= 0; i--)
         {
-            healthObserver.UpdateHealthHp();
+            if (this.listHealthObserver[i] == null)
+            {
+                this.listHealthObserver.RemoveAt(i);
+                continue;
+            }
+            this.listHealthObserver[i].UpdateHealthHp();
         }
     }
     public virtual bool GetIsDead()
@@ -128,6 +141,23 @@ public class DamageReceiver : LoadMonoBehaviour
     public virtual void Reborn()
     {
         this.isDead = false;
+        this.isTakeDamage = false;
+        if (this.baseEntityController == null)
+        {
+            this.LoadBaseEntityController();
+        }
+        if (this.baseEntityController != null && this.baseEntityController.EntitySO != null)
+        {
+            this.baseHp = this.baseEntityController.EntitySO.baseHp;
+            this.defence = this.baseEntityController.EntitySO.baseDefence;
+            this.damageMultiplier = this.baseEntityController.EntitySO.damageMultiplier;
+            this.expReward = this.baseEntityController.EntitySO.expReward;
+        }
+        if (this.baseHp <= 0)
+        {
+            this.baseHp = 500f;
+        }
         this.hp = this.baseHp;
+        this.OnChangeUI();
     }
 }

@@ -51,6 +51,7 @@ public class MinionController : BaseEntityController
         this.LoadStateManager();
         this.LoadMinionMoving();
         this.LoadMinionAttack();
+        this.LoadOwner();
     }
     public virtual void ReceiveCommand(MinionCommand command)
     {
@@ -99,6 +100,14 @@ public class MinionController : BaseEntityController
         if (this.MinionAttack != null) return;
         this.minionAttack = GetComponent<MinionAttack>();
         Debug.LogWarning(transform.name + " : LoadMinionAttack");
+    }
+    protected virtual void LoadOwner()
+    {
+        if (this.owner != null) return;
+        string nameObj = this.transform.name;
+        nameObj = nameObj.Replace("Low", "");
+        this.owner = GameObject.Find(nameObj)?.transform;
+        Debug.LogWarning(transform.name + " : LoadOwner");
     }
     public virtual void SetBossOwner(Transform owner)
     {

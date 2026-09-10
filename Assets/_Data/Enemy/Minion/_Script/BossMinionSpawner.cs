@@ -17,7 +17,19 @@ public class BossMinionSpawner : LoadMonoBehaviour
     {
         base.LoadComponent();
         this.LoadLargeEnemyController();
+        this.LoadMinionPrefab();
         this.SetHasRespawn(true);
+    }
+    private void OnEnable()
+    {
+        if (this.activeMinions.Count < this.maxMinion)
+        {
+            this.SpawnAllMinions();
+        }
+        else
+        {
+            this.ApplyCurrentBossCommandToMinions();
+        }
     }
     private void Start()
     {
@@ -37,7 +49,10 @@ public class BossMinionSpawner : LoadMonoBehaviour
         Vector3 spawnPosition = this.transform.parent.position + offset;
         if (SpawnEnemyPoolingManager.Instance == null) return null;
         MinionController minion = SpawnEnemyPoolingManager.Instance.SpawnEnemy(this.minionPrefab, spawnPosition, Quaternion.identity);
-        minion.SetBossOwner(this.bossController.transform);
+        if (this.bossController != null)
+        {
+            minion.SetBossOwner(this.bossController.transform);
+        }
         this.activeMinions.Add(minion);
         return minion;
     }
@@ -48,6 +63,7 @@ public class BossMinionSpawner : LoadMonoBehaviour
         {
             this.SpawnSingleMinion();
         }
+        this.ApplyCurrentBossCommandToMinions();
     }
     public virtual void HandleAutoRespawn()
     {
@@ -62,6 +78,28 @@ public class BossMinionSpawner : LoadMonoBehaviour
         {
             this.respawnTimer = 0f;
             this.SpawnSingleMinion();
+            this.ApplyCurrentBossCommandToMinions();
+        }
+    }
+    public virtual void ApplyCurrentBossCommandToMinions()
+    {
+        if (this.bossController == null)
+        {
+            this.LoadLargeEnemyController();
+        }
+
+        if (this.bossController != null && !this.bossController.IsAttacking)
+        {
+            this.OrderRecall();
+        }
+        else
+        {
+            Transform target = this.bossController != null ? this.bossController.Target : null;
+            if (target == null)
+            {
+                target = GameObject.Find("Player")?.transform;
+            }
+            this.OrderAttack(target);
         }
     }
     public virtual void CleanDeadMinions()
@@ -75,14 +113,18 @@ public class BossMinionSpawner : LoadMonoBehaviour
                 if (this.CheckListNone())
                 {
                     this.hasReSpawn = false;
-                    this.bossController.LargeMoving.SetMaximumDistance(1.5f);
-                    this.bossController.LargeMoving.SetMinximumDistance(0.5f);
+                    if (this.bossController != null)
+                    {
+                        this.bossController.SwitchToDirectAttack();
+                    }
                 }
             }
         }
     }
     public virtual void OrderAttack(Transform target)
     {
+        if (target == null && this.bossController != null) target = this.bossController.Target;
+        if (target == null) target = GameObject.Find("Player")?.transform;
         if (target == null) return;
         int count = this.activeMinions.Count;
         for (int i = 0; i < count; i++)
@@ -139,5 +181,11 @@ public class BossMinionSpawner : LoadMonoBehaviour
         if (this.bossController != null) return;
         this.bossController = GetComponentInParent<LargeEnemyController>();
         Debug.LogWarning(transform.name + " : LoadLargeEnemyController");
+    }
+    protected virtual void LoadMinionPrefab()
+    {
+        if (this.minionPrefab != null) return;
+        this.minionPrefab = GameObject.Find("Low" + transform.parent.name);
+        Debug.LogWarning(transform.name + " : LoadMinionPrefab");
     }
 }

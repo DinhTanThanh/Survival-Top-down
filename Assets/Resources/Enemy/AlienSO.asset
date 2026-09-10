@@ -9,14 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddd7df0009fe0a743bf00a25d115c7f9, type: 3}
-  m_Name: LowMummySO
+  m_Script: {fileID: 11500000, guid: 40e4491aa45a12e42a336ee9467776b2, type: 3}
+  m_Name: AlienSO
   m_EditorClassIdentifier: 
-  baseHp: 300
-  baseSpeed: 2
-  baseRotation: 180
-  baseDefence: 0
-  baseDamage: 3
-  damageMultiplier: 0
-  attackRange: 0.9
-  expReward: 10
+  minximumDistance: 2
+  maximumDistance: 6
+  strafeMovement: 4

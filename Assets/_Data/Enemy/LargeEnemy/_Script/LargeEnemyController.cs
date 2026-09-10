@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class LargeEnemyController : BaseBossController
 {
@@ -28,9 +28,29 @@ public class LargeEnemyController : BaseBossController
     public LargeEnemyDeadState DeadState => deadState;
     public LargeMoving LargeMoving=>largeMoving;
     public LargeAttack LargeAttack=> largeAttack;   
+    public bool IsAttacking => isAttacking;
+    public bool IsDirectAttack => isDirectAttack;
+
+    public virtual bool CanDirectAttack()
+    {
+        if (this.isDirectAttack) return true;
+        if (this.bossMinionSpawner == null) return true;
+        return false;
+    }
     private void OnEnable()
     {
         this.isDirectAttack = false;
+        this.isAttacking = true;
+        this.combatTimer = 0f;
+        this.healTimer = 0f;
+        if (this.damageReceiver == null)
+        {
+            this.LoadDamageReceiver();
+        }
+        if (this.damageReceiver != null)
+        {
+            this.damageReceiver.Reborn();
+        }
         if (this.stateManager != null && this.idleState != null)
         {
             this.stateManager.ChangeState(this.idleState);  

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BombData
   m_EditorClassIdentifier: 
   TimeDelay: 1.3
-  BaseDamage: 80
+  BaseDamage: 200
   ExplosionRadius: 5
   CoolDown: 10
   prefab: {fileID: 6247553598375965798, guid: cd8cd064d185fc14ebedcc0a02583b33, type: 3}

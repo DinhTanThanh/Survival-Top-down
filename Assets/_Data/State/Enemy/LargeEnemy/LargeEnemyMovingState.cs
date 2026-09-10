@@ -29,7 +29,7 @@ public class LargeEnemyMovingState : IState
             return;
         }
 
-        if (_controller.LargeAttack.GetIsAttack() && _controller.LargeAttack.IsReachedDistance())
+        if (_controller.CanDirectAttack() && _controller.LargeAttack.GetIsAttack() && _controller.LargeAttack.IsReachedDistance())
         {
             _controller.StateManager.ChangeState(_controller.AttackState);
             return;
