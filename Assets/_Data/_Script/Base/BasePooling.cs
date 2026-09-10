@@ -25,10 +25,11 @@ public class BasePooling : BaseSpawn
         prefab.name = prefab.name.Replace("(Clone)", "");
         prefab.gameObject.SetActive(true);
     }
-    public virtual void ExecuteSpawnPooling(GameObject prefab, Vector3 position, Quaternion rotation)
+    public virtual GameObject ExecuteSpawnPooling(GameObject prefab, Vector3 position, Quaternion rotation)
     {
         GameObject newObject = this.SpawnObjectPooling(prefab);
         this.SetTransformObjectSpawn(newObject, position, rotation);
+        return newObject;
     }
     public virtual void GoBackList(GameObject gameObejct)
     {

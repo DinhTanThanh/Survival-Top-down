@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerSO
   m_EditorClassIdentifier: 
   baseHp: 500
-  baseSpeed: 3.8
+  baseSpeed: 3
   baseRotation: 360
   baseDefence: 0
   baseDamage: 0

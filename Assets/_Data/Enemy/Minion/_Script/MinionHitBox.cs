@@ -4,20 +4,13 @@ public class MinionHitBox : LoadMonoBehaviour
 {
     [SerializeField] protected MinionHandRight minionHandRight;
     [SerializeField] protected MinionHandLeft minionHandLeft;
-    [SerializeField] protected MinionController minionController;
     protected override void LoadComponent()
     {
         base.LoadComponent();
-        this.LoadMeleeEnemyController();
         this.LoadMinionHandRight();
         this.LoadMinionHandLeft();
     }
-    protected virtual void LoadMeleeEnemyController()
-    {
-        if (this.minionController != null) return;
-        this.minionController = GetComponentInParent<MinionController>();
-        Debug.LogWarning(transform.name + " : LoadMinionController");
-    }
+    
     protected virtual void LoadMinionHandRight()
     {
         if (this.minionHandRight != null) return;

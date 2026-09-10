@@ -5,11 +5,11 @@ public class MinionnMoving : LoadMonoBehaviour
     [SerializeField] protected float stoppingDistance = 0.2f;
     [SerializeField] protected float attackRange;
     [SerializeField] protected float speedMovement;
-    [SerializeField] protected float speedRotation;
-    [SerializeField] protected float separationRadius = 2f;
-    [SerializeField] protected float separationWeight = 1.8f;
-    [SerializeField] protected Transform target;
+    [SerializeField] protected float speedRotation = 360f;
+    [SerializeField] protected float separationRadius = 0.8f;
+    [SerializeField] protected float separationWeight = 0.5f;
     [SerializeField] protected MinionController controller;
+    protected Transform target;
     protected Vector3 targetOffset;
     protected Vector3 randomOffset;
 
@@ -26,6 +26,7 @@ public class MinionnMoving : LoadMonoBehaviour
     }
     protected override void Awake()
     {
+        base.Awake();
         this.randomOffset = Random.insideUnitSphere * 2.5f;
         this.randomOffset.y = 0;
     }
@@ -39,9 +40,17 @@ public class MinionnMoving : LoadMonoBehaviour
     public virtual bool IsReachedTargetLimit()
     {
         if (this.target == null) return true;
-        Vector3 destination = this.GetDestination();
         Vector3 currentPos = this.controller != null ? this.controller.transform.position : transform.position;
-        return Vector3.Distance(destination, currentPos) <= this.stoppingDistance;
+        Vector3 destination = this.GetDestination();
+        if (Vector3.Distance(destination, currentPos) <= this.stoppingDistance) return true;
+
+        float distanceToTarget = Vector3.Distance(this.target.position, currentPos);
+        if (distanceToTarget <= this.attackRange * 0.9f)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public virtual void Moving()
@@ -63,8 +72,9 @@ public class MinionnMoving : LoadMonoBehaviour
             Quaternion newRotation = Quaternion.RotateTowards(this.controller.Rb.rotation, targetRotation, this.speedRotation * Time.fixedDeltaTime);
             this.controller.Rb.MoveRotation(newRotation);
 
+            float forwardAlignment = Mathf.Clamp01(Vector3.Dot(this.controller.Rb.rotation * Vector3.forward, desiredDirection));
             Vector3 moveDirection = this.controller.Rb.rotation * Vector3.forward;
-            Vector3 newDelta = moveDirection * (this.speedMovement * Time.fixedDeltaTime);
+            Vector3 newDelta = moveDirection * (this.speedMovement * forwardAlignment * Time.fixedDeltaTime);
             this.controller.Rb.MovePosition(this.controller.Rb.position + newDelta);
         }
         else
@@ -122,7 +132,7 @@ public class MinionnMoving : LoadMonoBehaviour
         if (directionToTarget.sqrMagnitude > 0.001f)
         {
             Quaternion faceTarget = Quaternion.LookRotation(directionToTarget);
-            Quaternion newRotation = Quaternion.RotateTowards(this.controller.Rb.rotation, faceTarget, this.speedRotation * Time.fixedDeltaTime);
+            Quaternion newRotation = Quaternion.RotateTowards(this.controller.Rb.rotation, faceTarget, this.speedRotation * 1.5f * Time.fixedDeltaTime);
             this.controller.Rb.MoveRotation(newRotation);
         }
     }

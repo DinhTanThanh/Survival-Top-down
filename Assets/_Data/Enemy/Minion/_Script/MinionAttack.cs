@@ -5,8 +5,8 @@ public class MinionAttack : LoadMonoBehaviour
     [SerializeField] protected float timeDelay;
     [SerializeField] protected float attackRange;
     [SerializeField] protected bool isAttack;
-    [SerializeField] protected Transform targetPosition;
     [SerializeField] protected MinionController controller;
+    protected Transform targetPosition;
     public Transform TargetPosition => targetPosition;
     protected override void LoadComponent()
     {

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ddd7df0009fe0a743bf00a25d115c7f9, type: 3}
-  m_Name: LowMummySO
+  m_Name: MummySO
   m_EditorClassIdentifier: 
-  baseHp: 300
+  baseHp: 700
   baseSpeed: 2
   baseRotation: 180
   baseDefence: 0
-  baseDamage: 3
+  baseDamage: 10
   damageMultiplier: 0
-  attackRange: 0.9
+  attackRange: 2
   expReward: 10
