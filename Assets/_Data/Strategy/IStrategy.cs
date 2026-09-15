@@ -15,12 +15,14 @@ public abstract class BaseBossAttackStrategy : IStrategy
     protected float lastExecuteTime = -999f;
     protected float minRange;
     protected float maxRange;
+    protected GameObject activeIndicator;
 
     public float Duration => duration;
     public float Cooldown => cooldown;
     public float MinRange => minRange;
     public float MaxRange => maxRange;
     public bool IsOnCooldown => Time.time < lastExecuteTime + cooldown;
+    public GameObject ActiveIndicator => activeIndicator;
 
     public BaseBossAttackStrategy(LargeEnemyController controller, LargeAttack attackComponent)
     {
@@ -45,6 +47,33 @@ public abstract class BaseBossAttackStrategy : IStrategy
     }
 
     protected abstract IEnumerator AttackRoutine();
+
+    public virtual GameObject ShowIndicator(string indicatorName, Vector3 position, Quaternion rotation)
+    {
+        this.HideIndicator();
+        if (IndicatorSystem.Instance != null)
+        {
+            this.activeIndicator = IndicatorSystem.Instance.SpawnIndicator(indicatorName, position, rotation);
+        }
+        return this.activeIndicator;
+    }
+
+    public virtual void HideIndicator()
+    {
+        if (this.activeIndicator != null)
+        {
+            if (IndicatorSystem.Instance != null)
+            {
+                IndicatorSystem.Instance.DespawnIndicator(this.activeIndicator);
+            }
+            this.activeIndicator = null;
+        }
+    }
+
+    public virtual void Cancel()
+    {
+        this.HideIndicator();
+    }
 
     protected virtual void RotateTowardsTarget()
     {

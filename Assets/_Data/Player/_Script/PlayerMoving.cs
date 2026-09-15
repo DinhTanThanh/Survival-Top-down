@@ -55,7 +55,7 @@ public class PlayerMoving : LoadMonoBehaviour
     public virtual void Moving()
     {
         Vector3 movementPosition = (camForward * this.vertical) + (camRight * this.horizontal);
-        if (movementPosition.magnitude > 1f)
+        if (movementPosition.sqrMagnitude > 0.001f)
         {
             movementPosition.Normalize();
         }

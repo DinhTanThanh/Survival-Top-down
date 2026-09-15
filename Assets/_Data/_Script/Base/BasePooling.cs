@@ -12,7 +12,7 @@ public class BasePooling : BaseSpawn
             if (this.listObjectPooling[i].name.CompareTo(prefab.name) == 0)
             {
                 objectPooling = this.listObjectPooling[i];
-                this.listObjectPooling.Remove(objectPooling);
+                this.listObjectPooling.RemoveAt(i);
                 return objectPooling;
             }
         }
@@ -31,8 +31,8 @@ public class BasePooling : BaseSpawn
         this.SetTransformObjectSpawn(newObject, position, rotation);
         return newObject;
     }
-    public virtual void GoBackList(GameObject gameObejct)
+    public virtual void GoBackList(GameObject obj)
     {
-        this.listObjectPooling.Add(gameObejct);
+        this.listObjectPooling.Add(obj);
     }
 }

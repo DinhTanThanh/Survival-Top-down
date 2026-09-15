@@ -15,7 +15,6 @@ public class JumpSlamAttackStrategy : BaseBossAttackStrategy
     {
         this.RotateTowardsTarget();
         this.PlayAnimation("MT02_JumpSlamAttack", "MT02_Attack13 1", "JumpSlamAttack");
-
         yield return new WaitForSeconds(0.2f);
 
         if (this.controller != null && this.controller.Target != null)
@@ -27,6 +26,11 @@ public class JumpSlamAttackStrategy : BaseBossAttackStrategy
             Vector3 direction = (targetPos - startPos).normalized;
             float targetDistance = Mathf.Max(0f, Vector3.Distance(startPos, targetPos) - 1.2f);
             Vector3 destination = startPos + direction * targetDistance;
+
+            Vector3 posDestination = destination;
+            posDestination.y = 0.011f;
+            Quaternion newRot = Quaternion.Euler(90, 0, 0);
+            this.ShowIndicator("JumpSlamIndicator", posDestination, newRot);
 
             float leapDuration = 0.45f;
             float elapsed = 0f;
@@ -52,8 +56,8 @@ public class JumpSlamAttackStrategy : BaseBossAttackStrategy
                 yield return null;
             }
         }
-
         yield return new WaitForSeconds(0.05f);
+        this.HideIndicator();
 
         if (this.controller != null)
         {

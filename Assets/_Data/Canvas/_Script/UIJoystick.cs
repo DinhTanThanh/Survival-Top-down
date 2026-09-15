@@ -6,14 +6,25 @@ public class UIJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
     [SerializeField] protected RectTransform joystickBackground;
     [SerializeField] protected RectTransform joystickHandle;
     [SerializeField] protected float handleLimit = 75f;
+    [SerializeField] protected float deadZone = 0.15f;
 
     private Vector2 inputVector = Vector2.zero;
+    private Vector2 defaultHandlePos;
+
     public Vector2 InputVector => inputVector;
+
+    protected virtual void Awake()
+    {
+        if (this.joystickBackground == null) this.joystickBackground = GetComponent<RectTransform>();
+        if (this.joystickHandle == null && transform.childCount > 0) this.joystickHandle = transform.GetChild(0).GetComponent<RectTransform>();
+        if (this.joystickHandle != null) this.defaultHandlePos = this.joystickHandle.anchoredPosition;
+    }
 
     protected virtual void Start()
     {
         if (this.joystickBackground == null) this.joystickBackground = GetComponent<RectTransform>();
-        if (this.joystickHandle == null) this.joystickHandle = transform.GetChild(0).GetComponent<RectTransform>();
+        if (this.joystickHandle == null && transform.childCount > 0) this.joystickHandle = transform.GetChild(0).GetComponent<RectTransform>();
+        if (this.joystickHandle != null) this.defaultHandlePos = this.joystickHandle.anchoredPosition;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -36,21 +47,25 @@ public class UIJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
             position.x = (position.x / this.joystickBackground.rect.width) * 2;
             position.y = (position.y / this.joystickBackground.rect.height) * 2;
             
-            this.inputVector = new Vector2(position.x, position.y);
-            this.inputVector = (this.inputVector.magnitude > 1.0f) ? this.inputVector.normalized : this.inputVector;
-            
-            this.joystickHandle.anchoredPosition = new Vector2(
-                this.inputVector.x * this.handleLimit, 
-                this.inputVector.y * this.handleLimit
-            );
+            Vector2 rawVector = new Vector2(position.x, position.y);
+            Vector2 clampedVector = (rawVector.magnitude > 1.0f) ? rawVector.normalized : rawVector;
+
+            this.joystickHandle.anchoredPosition = this.defaultHandlePos + (clampedVector * this.handleLimit);
+
+            if (rawVector.magnitude > this.deadZone)
+            {
+                this.inputVector = clampedVector.normalized;
+            }
+            else
+            {
+                this.inputVector = Vector2.zero;
+            }
         }
     }   
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        Vector2 newPos = Vector2.zero;
-        newPos.y = 9f;
         this.inputVector = Vector2.zero;
-        this.joystickHandle.anchoredPosition = newPos;
+        this.joystickHandle.anchoredPosition = this.defaultHandlePos;
     }
 }
