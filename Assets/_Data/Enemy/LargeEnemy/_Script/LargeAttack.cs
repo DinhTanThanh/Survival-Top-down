@@ -113,7 +113,6 @@ public class LargeAttack : StrategyContext
 
     public virtual float ExecuteAttack()
     {
-        this.InitStrategies();
         BaseBossAttackStrategy chosenStrategy = this.SelectBestStrategy();
         if (chosenStrategy != null)
         {
@@ -122,5 +121,14 @@ public class LargeAttack : StrategyContext
             return chosenStrategy.Duration;
         }
         return 1.0f;
+    }
+
+    public virtual void StopCurrentAttack()
+    {
+        this.StopAllCoroutines();
+        if (this.currentStrategy is BaseBossAttackStrategy bossStrategy)
+        {
+            bossStrategy.Cancel();
+        }
     }
 }

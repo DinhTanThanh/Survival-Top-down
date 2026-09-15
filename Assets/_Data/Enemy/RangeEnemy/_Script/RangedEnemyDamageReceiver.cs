@@ -3,8 +3,9 @@ using UnityEngine;
 public class RangedEnemyDamageReceiver : DamageReceiver
 {
     [SerializeField] protected RangedEnemyController rangeEnemyController;
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
         this.Reborn();
     }
     protected override void LoadComponent()

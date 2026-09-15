@@ -54,5 +54,9 @@ public class LargeEnemyAttackState : IState
 
     public void Exit()
     {
+        if (_controller != null && _controller.LargeAttack != null)
+        {
+            _controller.LargeAttack.StopCurrentAttack();
+        }
     }
 }
