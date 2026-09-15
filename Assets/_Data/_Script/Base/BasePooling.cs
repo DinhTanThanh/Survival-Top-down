@@ -20,6 +20,7 @@ public class BasePooling : BaseSpawn
     }
     protected virtual void SetTransformObjectSpawn(GameObject prefab, Vector3 position, Quaternion rotation)
     {
+        if (prefab == null) return;
         prefab.transform.position = position;
         prefab.transform.rotation = rotation;
         prefab.name = prefab.name.Replace("(Clone)", "");
@@ -33,6 +34,7 @@ public class BasePooling : BaseSpawn
     }
     public virtual void GoBackList(GameObject obj)
     {
+        if (obj == null) return;
         this.listObjectPooling.Add(obj);
     }
 }
