@@ -22,7 +22,10 @@ public class BulletDamageSender : DamageSender
         damageReceiver.SetIsTakeDamage(true);
         Vector3 posSpawn = this.transform.position;
         posSpawn.y = 0f;
-        SpawnVFX_SphereVio.Instance.ExecuteSpawnPooling(this.bulletController.VFX_SphereVio,posSpawn,Quaternion.identity);
+        if (this.bulletController != null && this.bulletController.HitVFX != null && SpawnVFX.Instance != null)
+        {
+            SpawnVFX.Instance.ExecuteSpawnPooling(this.bulletController.HitVFX, posSpawn, Quaternion.identity);
+        }
         float damage = this.CalculateDamage();
         damageReceiver.ReduceHp(damage);
         this.transform.gameObject.SetActive(false);

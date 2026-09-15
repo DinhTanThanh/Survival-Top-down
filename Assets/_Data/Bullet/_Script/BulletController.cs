@@ -5,20 +5,22 @@ using UnityEngine.Rendering;
 public class BulletController : BaseWeaponController
 {
     [SerializeField] protected Transform firePointStart;
-    [SerializeField] protected GameObject vfx_SphereVio;
+    [SerializeField] protected GameObject hitVFX;
     public Transform FirePointStart => firePointStart;
-    public GameObject VFX_SphereVio => vfx_SphereVio;
+    public GameObject HitVFX => hitVFX;
+    public GameObject VFX_SphereVio => hitVFX;
+
     protected override void LoadComponent()
     {
         base.LoadComponent();
         this.LoadFirePointStart();
-        this.LoadVFX_SphereVio();
+        this.LoadHitVFX();
     }
-    protected virtual void LoadVFX_SphereVio()
+    protected virtual void LoadHitVFX()
     {
-        if (this.vfx_SphereVio != null) return;
-        this.vfx_SphereVio = GameObject.Find("VFX_SphereVio");
-        Debug.LogWarning(transform.name + " : LoadVFX_SphereVio");
+        if (this.hitVFX != null) return;
+        this.hitVFX = GameObject.Find("VFX_SphereVio");
+        Debug.LogWarning(transform.name + " : LoadHitVFX");
     }
     protected virtual void LoadFirePointStart()
     {

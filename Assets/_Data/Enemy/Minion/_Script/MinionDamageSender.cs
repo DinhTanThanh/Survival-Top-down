@@ -12,7 +12,6 @@ public class MinionDamageSender : DamageSender
     }
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("va cham");
         DamageReceiver dameReceiver = other.transform.parent?.GetComponentInChildren<DamageReceiver>();
         if (dameReceiver == null) return;
         if (dameReceiver is PlayerDamageReceiver)

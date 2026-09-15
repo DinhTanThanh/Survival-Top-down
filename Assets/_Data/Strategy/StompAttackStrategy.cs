@@ -17,8 +17,8 @@ public class StompAttackStrategy : BaseBossAttackStrategy
         this.RotateTowardsTarget();
         this.PlayAnimation("MT02_StompAttack", "MT02_Attack10 1", "StompAttack");
 
-        if (this.controller != null)
-        {
+        if (this.controller == null) yield return null;
+        
             Vector3 localOffset = new Vector3(0.18f, 0f, 1f);
             Vector3 newPos = this.controller.transform.position + this.controller.transform.rotation * localOffset;
             newPos.y = 0.011f;
@@ -28,13 +28,12 @@ public class StompAttackStrategy : BaseBossAttackStrategy
             Quaternion newRot = this.controller.transform.rotation * Quaternion.Euler(fixedRotX, 0f, fixedRotZ);
 
             this.ShowIndicator("StompIndicator", newPos, newRot);
-        }
+        
 
         try
         {
             yield return new WaitForSeconds(0.85f);
-
-            this.HideIndicator();
+            this.ShowIndicator("FX_Stomp", newPos, Quaternion.identity);
 
             if (this.controller != null)
             {
@@ -45,6 +44,7 @@ public class StompAttackStrategy : BaseBossAttackStrategy
             if (remaining > 0f)
             {
                 yield return new WaitForSeconds(remaining);
+                this.HideIndicator();
             }
         }
         finally { }

@@ -17,48 +17,46 @@ public class JumpSlamAttackStrategy : BaseBossAttackStrategy
         this.PlayAnimation("MT02_JumpSlamAttack", "MT02_Attack13 1", "JumpSlamAttack");
         yield return new WaitForSeconds(0.2f);
 
-        if (this.controller != null && this.controller.Target != null)
+        if (this.controller == null || this.controller.Target == null) yield return null;
+        Vector3 startPos = this.controller.transform.position;
+        Vector3 targetPos = this.controller.Target.position;
+        targetPos.y = startPos.y;
+
+        Vector3 direction = (targetPos - startPos).normalized;
+        float targetDistance = Mathf.Max(0f, Vector3.Distance(startPos, targetPos) - 1.2f);
+        Vector3 destination = startPos + direction * targetDistance;
+
+        Vector3 posDestination = destination;
+        posDestination.y = 0.011f;
+        Quaternion newRot = Quaternion.Euler(90, 0, 0);
+        this.ShowIndicator("JumpSlamIndicator", posDestination, newRot);
+
+        float leapDuration = 0.45f;
+        float elapsed = 0f;
+
+        Rigidbody rb = this.controller.GetComponent<Rigidbody>();
+
+        while (elapsed < leapDuration)
         {
-            Vector3 startPos = this.controller.transform.position;
-            Vector3 targetPos = this.controller.Target.position;
-            targetPos.y = startPos.y;
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / leapDuration);
+            float smoothT = Mathf.Sin(t * Mathf.PI * 0.5f);
+            Vector3 newPos = Vector3.Lerp(startPos, destination, smoothT);
 
-            Vector3 direction = (targetPos - startPos).normalized;
-            float targetDistance = Mathf.Max(0f, Vector3.Distance(startPos, targetPos) - 1.2f);
-            Vector3 destination = startPos + direction * targetDistance;
-
-            Vector3 posDestination = destination;
-            posDestination.y = 0.011f;
-            Quaternion newRot = Quaternion.Euler(90, 0, 0);
-            this.ShowIndicator("JumpSlamIndicator", posDestination, newRot);
-
-            float leapDuration = 0.45f;
-            float elapsed = 0f;
-
-            Rigidbody rb = this.controller.GetComponent<Rigidbody>();
-
-            while (elapsed < leapDuration)
+            if (rb != null)
             {
-                elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / leapDuration);
-                float smoothT = Mathf.Sin(t * Mathf.PI * 0.5f);
-                Vector3 newPos = Vector3.Lerp(startPos, destination, smoothT);
-
-                if (rb != null)
-                {
-                    rb.MovePosition(newPos);
-                }
-                else if (this.controller != null)
-                {
-                    this.controller.transform.position = newPos;
-                }
-
-                yield return null;
+                rb.MovePosition(newPos);
             }
-        }
-        yield return new WaitForSeconds(0.05f);
-        this.HideIndicator();
+            else if (this.controller != null)
+            {
+                this.controller.transform.position = newPos;
+            }
 
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.05f);
+        this.ShowIndicator("FX_JumpSlam", posDestination, Quaternion.identity);
         if (this.controller != null)
         {
             this.DealDamageInSphere(this.controller.transform.position, 3.2f, 1.75f);
@@ -68,6 +66,7 @@ public class JumpSlamAttackStrategy : BaseBossAttackStrategy
         if (remaining > 0f)
         {
             yield return new WaitForSeconds(remaining);
+            this.HideIndicator();
         }
     }
 }
