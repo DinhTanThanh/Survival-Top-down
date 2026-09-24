@@ -21,6 +21,11 @@ public class PlayerMoveState : IState
     public void Execute()
     {
         if (InputSystem.Instance == null || _controller == null || _controller.PlayerStateManager == null) return;
+        if (_controller.CrowdManagerEffect != null && _controller.CrowdManagerEffect.IsStunned)
+        {
+            _controller.PlayerStateManager.ChangeState(_controller.StunState);
+            return;
+        }
         if (_controller.DashExplosionSkill != null && _controller.DashExplosionSkill.GetIsDash()) return;
         bool hasInput = InputSystem.Instance.GetHorizontal() != 0f || InputSystem.Instance.GetVertical() != 0f;
         if (hasInput)

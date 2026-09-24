@@ -260,7 +260,7 @@ Transform:
   m_GameObject: {fileID: 20219099}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.006}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5548,7 +5548,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5715074624737628609, guid: eaac713e3dad52248920aca8a78c14dc, type: 3}
   m_PrefabInstance: {fileID: 2830223112687154439}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2830223112687154440}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73e9f06a32783a94792366bc4f1c816d, type: 3}
@@ -7240,7 +7240,7 @@ Transform:
   m_GameObject: {fileID: 1482344356}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.266}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8181,7 +8181,7 @@ Transform:
   m_GameObject: {fileID: 1617121582}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.353, y: 0, z: -4.49}
+  m_LocalPosition: {x: 1.353, y: 0, z: -5.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -22119,6 +22119,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 478651854}
     - target: {fileID: 5715074624737628609, guid: eaac713e3dad52248920aca8a78c14dc, type: 3}
+      propertyPath: crowdManagerEffect
+      value: 
+      objectReference: {fileID: 2830223112687154441}
+    - target: {fileID: 5715074624737628609, guid: eaac713e3dad52248920aca8a78c14dc, type: 3}
       propertyPath: dashExplosionSkill
       value: 
       objectReference: {fileID: 89393108}
@@ -22153,8 +22157,29 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5094201577097776117, guid: eaac713e3dad52248920aca8a78c14dc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2830223112687154441}
   m_SourcePrefab: {fileID: 100100000, guid: eaac713e3dad52248920aca8a78c14dc, type: 3}
+--- !u!1 &2830223112687154440 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5094201577097776117, guid: eaac713e3dad52248920aca8a78c14dc, type: 3}
+  m_PrefabInstance: {fileID: 2830223112687154439}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2830223112687154441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2830223112687154440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ef06618d09eb9a4b856846da64e7606, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentCC: 0
 --- !u!1 &2831201986133888137
 GameObject:
   m_ObjectHideFlags: 0
@@ -37351,6 +37376,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bullet
       objectReference: {fileID: 0}
+    - target: {fileID: 8307204311044627608, guid: 60001414ead2c7245ab2908d88b2f12b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -48035,6 +48064,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1564503052}
     m_Modifications:
     - target: {fileID: 1554929676208377454, guid: 2c234587bfd4dc84cbfac95fd81dbb7b, type: 3}
+      propertyPath: baseDamage
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 1554929676208377454, guid: 2c234587bfd4dc84cbfac95fd81dbb7b, type: 3}
       propertyPath: bulletController
       value: 
       objectReference: {fileID: 2062982029425419712}
@@ -48081,6 +48114,10 @@ PrefabInstance:
     - target: {fileID: 8653144882431058416, guid: 2c234587bfd4dc84cbfac95fd81dbb7b, type: 3}
       propertyPath: m_Name
       value: VFX_SphereVio
+      objectReference: {fileID: 0}
+    - target: {fileID: 8653144882431058416, guid: 2c234587bfd4dc84cbfac95fd81dbb7b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -113,7 +113,7 @@ public abstract class BaseBossAttackStrategy : IStrategy
         {
             if (col == null) continue;
             DamageReceiver receiver = col.transform.parent?.GetComponentInChildren<DamageReceiver>();
-            if (receiver == null || receiver is MeleeEnemyDamageReceiver || receiver is RangedEnemyDamageReceiver) continue;
+            if (receiver == null || receiver is not PlayerDamageReceiver) continue;
             if (receiver != this.controller.DamageReceiver)
             {
                 receiver.SetIsTakeDamage(true);
