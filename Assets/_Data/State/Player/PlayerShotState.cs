@@ -24,6 +24,11 @@ public class PlayerShotState : IState
         if (InputSystem.Instance == null || _controller == null || _controller.PlayerStateManager == null) return;
 
         bool hasInput = InputSystem.Instance.GetHorizontal() != 0f || InputSystem.Instance.GetVertical() != 0f;
+        if (_controller.CrowdManagerEffect.IsStunned)
+        {
+            _controller.PlayerStateManager.ChangeState(_controller.StunState);
+            return;
+        }
         if (hasInput)
         {
             if (_controller.PlayerMoving != null)

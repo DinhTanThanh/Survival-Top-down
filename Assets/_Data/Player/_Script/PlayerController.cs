@@ -7,6 +7,7 @@ public class PlayerController : BaseEntityController
     [SerializeField] protected GameObject bullet;
     [SerializeField] protected Indicator indicator;
     [SerializeField] protected StateManager playerStateManager;
+    [SerializeField] protected CrowdManagerEffect crowdManagerEffect;
     [SerializeField] protected ShotData shotData;
     [SerializeField] protected LevelGrowthData levelGrowthData;
     [SerializeField] protected ButtonAttack buttonAttack;
@@ -18,11 +19,12 @@ public class PlayerController : BaseEntityController
     protected PlayerIdleState idleState;
     protected PlayerMoveState moveState;
     protected PlayerShotState shotState;
-
+    protected PlayerStunState stunState;
     public Transform FirePoint => firePoint;
     public GameObject Bullet => bullet;
     public Indicator Indicator => indicator;
     public StateManager PlayerStateManager => playerStateManager;
+    public CrowdManagerEffect CrowdManagerEffect => crowdManagerEffect;
     public ShotData ShotData => shotData;
     public LevelGrowthData LevelGrowthData => levelGrowthData;
     public ButtonAttack ButtonAttack => buttonAttack;
@@ -33,6 +35,7 @@ public class PlayerController : BaseEntityController
     public PlayerIdleState IdleState => idleState;
     public PlayerMoveState MoveState => moveState;
     public PlayerShotState ShotState => shotState;
+    public PlayerStunState StunState => stunState;
     public ButtonDashExplosionSkill DashExplosionSkill => dashExplosionSkill;
     protected virtual void Start()
     {
@@ -44,6 +47,7 @@ public class PlayerController : BaseEntityController
         this.idleState = new PlayerIdleState(this);
         this.moveState = new PlayerMoveState(this);
         this.shotState = new PlayerShotState(this);
+        this.stunState = new PlayerStunState(this);
 
         if (this.playerStateManager != null)
         {
@@ -55,6 +59,7 @@ public class PlayerController : BaseEntityController
     {
         base.LoadComponent();
         this.LoadPlayerStateManager();
+        this.LoadCrowdManagerEffect();
         this.LoadShotData();
         this.LoadLevelSO();
         this.LoadFirePoint();
@@ -84,6 +89,12 @@ public class PlayerController : BaseEntityController
         if (this.playerStateManager != null) return;
         this.playerStateManager = GetComponent<StateManager>();
         Debug.LogWarning(transform.name + "LoadPlayerStateManager");
+    }
+    protected virtual void LoadCrowdManagerEffect()
+    {
+        if (this.crowdManagerEffect != null) return;
+        this.crowdManagerEffect = GetComponent<CrowdManagerEffect>();
+        Debug.LogWarning(transform.name + " : LoadCrowdManagerEffect");
     }
     protected virtual void LoadPlayerLevel()
     {

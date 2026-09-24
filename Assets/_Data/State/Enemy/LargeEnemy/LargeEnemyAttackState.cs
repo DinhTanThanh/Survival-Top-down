@@ -35,8 +35,7 @@ public class LargeEnemyAttackState : IState
 
         if (_controller.DamageReceiver.GetIsTakeDamage())
         {
-            _controller.StateManager.ChangeState(_controller.GetHitState);
-            return;
+            _controller.DamageReceiver.SetIsTakeDamage(false);
         }
 
         _timer += Time.fixedDeltaTime;

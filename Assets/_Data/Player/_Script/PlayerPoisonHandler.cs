@@ -1,3 +1,4 @@
+﻿using System.Collections;
 using UnityEngine;
 
 public class PlayerPoisonHandler : LoadMonoBehaviour
@@ -16,9 +17,11 @@ public class PlayerPoisonHandler : LoadMonoBehaviour
     protected virtual void LoadPlayerController()
     {
         if (this.playerController != null) return;
-        this.playerController = GetComponentInParent<PlayerController>();
+        this.playerController = GetComponent<PlayerController>();
         Debug.LogWarning(transform.name + " : LoadPlayerController");
     }
+    
+    
     public virtual void SetBaseDamagePoison(float baseDamagePoison)
     {
         this.baseDamagePoison = baseDamagePoison;
