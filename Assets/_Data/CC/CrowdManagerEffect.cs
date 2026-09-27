@@ -5,8 +5,9 @@ public class CrowdManagerEffect : LoadMonoBehaviour
 {
     [SerializeField] protected CrowdControlType currentCC;
     public bool IsStunned => HasCC(CrowdControlType.Stun);
+    public bool CanUseSkill => !IsStunned;
    
-    protected virtual bool HasCC(CrowdControlType cc) => (this.currentCC & cc) != 0;
+    public virtual bool HasCC(CrowdControlType cc) => (this.currentCC & cc) != 0;
     public virtual void ApplyCC(CrowdControlType cc, float duration)
     {
         this.currentCC |= cc;

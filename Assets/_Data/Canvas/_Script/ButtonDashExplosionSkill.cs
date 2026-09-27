@@ -1,4 +1,3 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -41,6 +40,13 @@ public class ButtonDashExplosionSkill : BaseButton
         this.SetDashDuration(this.dashExplosionData.DashDuration);
         this.SetCoolDown(this.dashExplosionData.CoolDown);
     }
+    protected virtual void Start()
+    {
+        if (this.button != null)
+        {
+            this.button.onClick.AddListener(this.EnableIsPressDash);
+        }
+    }
     protected virtual void LoadPlayerEventAnimation()
     {
         if (this.playerEventAnimation != null) return;
@@ -64,6 +70,15 @@ public class ButtonDashExplosionSkill : BaseButton
     }
     private void FixedUpdate()
     {
+        if (this.IsPlayerCrowdControlled())
+        {
+            if (this.isDash || this.isPressedDash)
+            {
+                this.CancelDash();
+            }
+            return;
+        }
+
         if (this.isPressedDash)
         {
             this.ExecuteDashExplosionSkill();
@@ -125,10 +140,10 @@ public class ButtonDashExplosionSkill : BaseButton
                 {
                     this.rb.MovePosition(this.posDestination);
                 }
-                if (this.playerEventAnimation != null)
-                {
-                    this.playerEventAnimation.Explosion();
-                }
+                //if (this.playerEventAnimation != null)
+                //{
+                //    this.playerEventAnimation.Explosion();
+                //}
                 this.isElapsed = false;
                 this.elapsedTime = 0f;
                 this.canUseSkill = false;
@@ -140,6 +155,8 @@ public class ButtonDashExplosionSkill : BaseButton
     public virtual void EnableIsPressDash()
     {
         if (!this.canUseSkill || this.isDash) return;
+        if (this.IsPlayerCrowdControlled()) return;
+
         this.isPressedDash = true;
         this.isDash = true;
 
@@ -156,6 +173,28 @@ public class ButtonDashExplosionSkill : BaseButton
             }
         }
     }
+
+    public virtual bool IsPlayerCrowdControlled()
+    {
+        if (this.playerController == null)
+        {
+            this.LoadPlayerController();
+        }
+        if (this.playerController != null && this.playerController.CrowdManagerEffect != null)
+        {
+            return this.playerController.CrowdManagerEffect.IsStunned;
+        }
+        return false;
+    }
+
+    public virtual void CancelDash()
+    {
+        this.isElapsed = false;
+        this.elapsedTime = 0f;
+        this.isPressedDash = false;
+        this.isDash = false;
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

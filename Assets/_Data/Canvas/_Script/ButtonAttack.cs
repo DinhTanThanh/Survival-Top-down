@@ -29,11 +29,17 @@ public class ButtonAttack : BaseButton
     }
     public virtual void EnableRangeIndicator()
     {
+        if (this.IsPlayerCrowdControlled()) return;
         this.rangeIndicator.SetActive(true);
         InputSystem.Instance.SetIsAttack(true);
     }
     public virtual void DisableRangeIndicator()
     {
         this.rangeIndicator.SetActive(false);
+    }
+    public virtual bool IsPlayerCrowdControlled()
+    {
+        PlayerController player = FindFirstObjectByType<PlayerController>();
+        return player != null && player.CrowdManagerEffect != null && player.CrowdManagerEffect.IsStunned;
     }
 }

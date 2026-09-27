@@ -31,7 +31,7 @@ public class PlayerEventAnimation : LoadMonoBehaviour
     {
         if (this.explosion_light == null) return;
         if (this.particlesystem != null) return;
-        this.particlesystem=this.explosion_light.GetComponent<ParticleSystem>();
+        this.particlesystem = this.explosion_light.GetComponent<ParticleSystem>();
         Debug.LogWarning(transform.name + " : LoadParticleSystem");
     }
     protected virtual void LoadExplosion_light()
