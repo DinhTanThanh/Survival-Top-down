@@ -9,6 +9,8 @@ public class JumpSlamAttackStrategy : BaseBossAttackStrategy
         this.maxRange = 9.0f;
         this.duration = 1.35f;
         this.cooldown = 6.0f;
+        this.SetRadius(3f);
+        this.SetlaunchForce(3f);
     }
 
     protected override IEnumerator AttackRoutine()
@@ -59,7 +61,8 @@ public class JumpSlamAttackStrategy : BaseBossAttackStrategy
         this.ShowIndicator("FX_JumpSlam", posDestination, Quaternion.identity);
         if (this.controller != null)
         {
-            this.DealDamageInSphere(this.controller.transform.position, 3.2f, 1.75f);
+            this.DealDamageInSphere(posDestination, 3f, 1.75f);
+            this.LaunchPlayerInsideIndicator(posDestination, 1f);
         }
 
         float remaining = this.duration - 0.7f;

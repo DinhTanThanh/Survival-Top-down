@@ -81,11 +81,18 @@ public class ButtonBombSkill : BaseButton
     public virtual void ExecuteBombSkill()
     {
         if (!this.canUseSkill) return;
+        if (this.IsPlayerCrowdControlled()) return;
         Vector3 pos = this.player.position;
         pos.y = 0f;
         pos += new Vector3(0, 0, -0.5f);
         SpawnBomb.Instance.ExecuteSpawnPooling(this.bombPrefab, pos, Quaternion.identity);
         this.canUseSkill = false;
+    }
+    public virtual bool IsPlayerCrowdControlled()
+    {
+        if (this.player == null) return false;
+        CrowdManagerEffect crowd = this.player.GetComponent<CrowdManagerEffect>();
+        return crowd != null && crowd.IsStunned;
     }
     public virtual void EnableRangeIndicator()
     {

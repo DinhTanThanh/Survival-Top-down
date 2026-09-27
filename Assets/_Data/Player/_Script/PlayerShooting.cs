@@ -69,6 +69,7 @@ public class PlayerShooting : LoadMonoBehaviour
     public virtual void Shooting()
     {
         if (!this.canFire || this.currentCharge <= 0) return;
+        if (this.playerController != null && this.playerController.CrowdManagerEffect != null && this.playerController.CrowdManagerEffect.IsStunned) return;
         Transform targetEnemy = this.GetTargetEnemy();
         Quaternion shootRotation = this.playerController.transform.rotation;
 

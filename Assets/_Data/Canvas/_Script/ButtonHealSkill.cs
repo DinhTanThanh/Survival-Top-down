@@ -130,15 +130,26 @@ public class ButtonHealSkill : BaseButton
     {
         if (!this.canUseSkill) return;
         if (this.playerDamageReceiver == null || this.playerDamageReceiver.GetIsDead()) return;
+        if (this.IsPlayerCrowdControlled()) return;
 
         if (this.healCoroutine != null)
         {
             StopCoroutine(this.healCoroutine);
         }
         this.healCoroutine = StartCoroutine(this.HealOverTime());
-        this.fx_Healing.Play();
+        if (this.fx_Healing != null)
+        {
+            this.fx_Healing.Play();
+        }
         this.canUseSkill = false;
         this.timer = 0f;
+    }
+
+    public virtual bool IsPlayerCrowdControlled()
+    {
+        if (this.playerDamageReceiver == null) return false;
+        CrowdManagerEffect crowd = this.playerDamageReceiver.GetComponentInParent<CrowdManagerEffect>();
+        return crowd != null && crowd.IsStunned;
     }
 
     protected virtual IEnumerator HealOverTime()

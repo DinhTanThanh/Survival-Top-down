@@ -47,7 +47,6 @@ public class LargeAttack : StrategyContext
                 this.stompStrategy = new StompAttackStrategy(this.largeEnemyController, this);
         }
     }
-
     protected virtual void LoadLargeEnemyController()
     {
         if (this.largeEnemyController != null) return;
